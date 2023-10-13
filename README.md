@@ -1,4 +1,4 @@
-# hackerthon
+# hackathon
 ## To Yihua
 1. build the project and see if there's any problem.
 2. write your function here.
