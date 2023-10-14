@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         val recButton = findViewById<Button>(R.id.rec_button)
         recButton.setOnClickListener {
             //你要寫在這
-
+            //test
 
 
             //----------------------------
