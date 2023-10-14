@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatroom_hackthon.R
 import com.example.chatroom_hackthon.data.Chat
 
-class ChatAdapter(private val context: Context, private var chatList: List<Chat>) :
+class ChatAdapter(private val context: Context, private var chatList: List<Chat>, private val recyclerView: RecyclerView) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
     inner class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,6 +27,11 @@ class ChatAdapter(private val context: Context, private var chatList: List<Chat>
         holder.userImage.setImageResource(chat.image ?: R.drawable.user_image)
         holder.userName.text = chat.name
         holder.chatText.text = chat.text
+
+        if (position == chatList.size - 1) {
+            recyclerView.smoothScrollToPosition(position)
+
+        }
     }
 
     override fun getItemCount(): Int {
@@ -34,7 +39,8 @@ class ChatAdapter(private val context: Context, private var chatList: List<Chat>
     }
 
     fun updateData(newChatList: List<Chat>) {
-        chatList = newChatList
-        notifyDataSetChanged() // Notify the RecyclerView that data has changed
+        chatList = newChatList.toMutableList()
+        notifyDataSetChanged()
     }
+
 }

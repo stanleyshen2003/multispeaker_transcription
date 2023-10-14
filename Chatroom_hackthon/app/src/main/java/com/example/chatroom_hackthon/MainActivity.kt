@@ -6,8 +6,9 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatroom_hackthon.data.Chat
 import com.example.chatroom_hackthon.data.DataSource
+import com.example.chatroom_hackthon.data.loadJSONFromAsset
+import com.example.chatroom_hackthon.data.parseChatJSON
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager =
             LinearLayoutManager(this) // 设置LayoutManager为LinearLayoutManager
 
-        adapter = ChatAdapter(this, chatList ?: emptyList())
+        adapter = ChatAdapter(this, chatList ?: emptyList() ,recyclerView)
         recyclerView.adapter = adapter
 
         val recButton = findViewById<Button>(R.id.rec_button)
@@ -37,10 +38,27 @@ class MainActivity : AppCompatActivity() {
 
 
             //----------------------------
-            val newChat = Chat(id = 7, name = "New User", image = R.drawable.user_image, text = "New Message")
-            dataSource.addChat(newChat)
+            val json = loadJSONFromAsset(baseContext, "chats.json")
 
-            adapter.updateData(dataSource.getChatList().value ?: emptyList())
+            // 解析 JSON 数据
+            val chatList = parseChatJSON(json)
+
+            // 获取当前聊天列表
+            val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
+
+            // 将新的聊天对象列表与当前列表合并
+            currentChatList.addAll(chatList)
+
+            // 更新数据源
+            dataSource.getChatList().postValue(currentChatList)
+
+            adapter.updateData(currentChatList)
+
+            recyclerView.postDelayed({
+                recyclerView.smoothScrollToPosition(currentChatList.size - 1)
+            }, 100)
+
+
 
         }
 
