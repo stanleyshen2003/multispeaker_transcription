@@ -1,4 +1,4 @@
-package com.example.chatroom_hackthon.Data
+package com.example.chatroom_hackthon.data
 
 import android.content.res.Resources
 import androidx.lifecycle.LiveData
