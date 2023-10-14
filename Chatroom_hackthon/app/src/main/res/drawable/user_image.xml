@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/oval_shape" />
+    <item android:drawable="@drawable/oval_shape1" />
 
     <!-- Add a record icon in the center of the button -->
     <item
-        android:drawable="@mipmap/ic_record_white"
+        android:drawable="@mipmap/ic_user"
         android:gravity="center" />
 </layer-list>
