@@ -7,6 +7,10 @@ please check [stackoverflow](https://stackoverflow.com/questions/46970565/button
 3. ur output should be a .wav file.\
 please check [google search:"kotlin 錄音 app"](https://github.com/zhoumeng1990/AudioAnalyze)
 
+## to start
+```pip install -r requirements.txt```
+
+
 
 ## git tutorial
 ### cloning files (once)
