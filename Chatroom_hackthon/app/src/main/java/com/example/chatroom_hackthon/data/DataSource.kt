@@ -14,7 +14,7 @@ class DataSource(resources: Resources) {
             chatsLiveData.postValue(listOf(chat))
         } else {
             val updatedList = currentList.toMutableList()
-            updatedList.add(0, chat)
+            updatedList.add(chat) // 添加到列表末尾
             chatsLiveData.postValue(updatedList)
         }
     }
@@ -30,7 +30,6 @@ class DataSource(resources: Resources) {
         return chatsLiveData
     }
 
-    /* Returns a random flower asset for flowers that are added. */
     fun getRandomChatImageAsset(): Int? {
         val randomNumber = (initialChatList.indices).random()
         return initialChatList[randomNumber].image

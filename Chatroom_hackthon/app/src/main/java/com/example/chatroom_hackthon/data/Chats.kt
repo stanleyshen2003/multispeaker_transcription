@@ -22,22 +22,22 @@ fun chatList(resources: Resources): List<Chat> {
             id = 3,
             name = resources.getString(R.string.user3_name),
             image = R.drawable.user_image,
-            text = resources.getString(R.string.text3)
+            text = "dsdfujhegfdsheth"
         ),
         Chat(
-            id = 1,
+            id = 4,
             name = resources.getString(R.string.user1_name),
             image = R.drawable.user_image,
             text = resources.getString(R.string.text4)
         ),
         Chat(
-            id = 2,
+            id = 5,
             name = resources.getString(R.string.user2_name),
             image = R.drawable.user_image,
             text = resources.getString(R.string.text5)
         ),
         Chat(
-            id = 3,
+            id = 6,
             name = resources.getString(R.string.user3_name),
             image = R.drawable.user_image,
             text = resources.getString(R.string.text6)
