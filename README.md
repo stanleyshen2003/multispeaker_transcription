@@ -6,3 +6,17 @@
 please check [stackoverflow](https://stackoverflow.com/questions/46970565/button-onclick-attribute-is-none-if-activity-written-in-kotlin)
 3. ur output should be a .wav file.\
 please check [google search:"kotlin 錄音 app"](https://github.com/zhoumeng1990/AudioAnalyze)
+
+
+## git tutorial
+### cloning files (once)
+1. git clone https:.....
+### config (once)
+1. git config user.name=""
+2. git config user.email=""
+### before editting
+1. git pull
+### upload
+1. git add .
+2. git commit -m "[the name of what u have done]"
+3. git push
