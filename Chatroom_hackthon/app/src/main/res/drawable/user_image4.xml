@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/oval_user" />
+    <item android:drawable="@drawable/oval_user4" />
 
     <!-- Add a record icon in the center of the button -->
     <item

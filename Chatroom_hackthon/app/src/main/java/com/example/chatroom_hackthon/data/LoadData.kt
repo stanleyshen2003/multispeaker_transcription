@@ -1,7 +1,6 @@
 package com.example.chatroom_hackthon.data
 
 import android.content.Context
-import com.example.chatroom_hackthon.R
 import org.json.JSONArray
 import java.io.InputStream
 
@@ -22,14 +21,13 @@ fun parseChatJSON(json: String): List<Chat> {
     val chatList = mutableListOf<Chat>()
     try {
         val jsonArray = JSONArray(json)
-        var index=1
         for (i in 0 until jsonArray.length()) {
             val jsonObject = jsonArray.getJSONObject(i)
             val name = jsonObject.getString("name")
             val text = jsonObject.getString("text")
-            val chat = Chat(index.toLong(),name, R.drawable.user_image, text)
+            val image = getImageForName(name) // Assign image based on name
+            val chat = Chat(i.toLong(), name, image, text)
             chatList.add(chat)
-            index+=1
         }
     } catch (e: Exception) {
         e.printStackTrace()

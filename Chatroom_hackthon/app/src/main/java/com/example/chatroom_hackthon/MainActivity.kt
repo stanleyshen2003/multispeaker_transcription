@@ -39,19 +39,11 @@ class MainActivity : AppCompatActivity() {
 
             //----------------------------
             val json = loadJSONFromAsset(baseContext, "chats.json")
-
-            // 解析 JSON 数据
             val chatList = parseChatJSON(json)
-
-            // 获取当前聊天列表
             val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
-
-            // 将新的聊天对象列表与当前列表合并
             currentChatList.addAll(chatList)
 
-            // 更新数据源
             dataSource.getChatList().postValue(currentChatList)
-
             adapter.updateData(currentChatList)
 
             recyclerView.postDelayed({
