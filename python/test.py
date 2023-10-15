@@ -4,6 +4,7 @@ import torchaudio
 import os
 import numpy as np
 from hyperpyyaml import load_hyperpyyaml
+import json
 
 '''
 not used
@@ -95,6 +96,15 @@ class Voice_process_agent():
     
     def deletenow(self):
         self.now_processing = []
+
+    
+    def to_json():
+        result_list = []
+        for record in voice_record:
+            result_list.append({'txt':record[0], 'who':record[1]})
+        result = json.dumps(result_list, indent=4)
+        with open('ouput.json', 'w') as output:
+            output.write(result)
                 
                 
                 
