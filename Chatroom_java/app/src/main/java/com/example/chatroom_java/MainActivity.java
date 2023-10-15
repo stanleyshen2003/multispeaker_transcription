@@ -42,6 +42,13 @@ public class MainActivity extends AppCompatActivity {
         recButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: ---------------------------------------------------
+                /* 寫一個function 可以每三秒鐘儲存一次 .wav
+                   function 可以寫在 folder Yihua/ 底下
+                   新增檔案方式: 右鍵 Yihua >> New >>  Java Class >> Class
+                   呼叫 function的方式: import com.example.chatroom_java.Yihua.你的檔名 */
+
+                //-----------------------------------------------------------------------
                 String json = loadJSONFromAsset(getApplicationContext(), "chats.json");
                 List<Chat> chatList = parseChatJSON(json);
                 List<Chat> currentChatList = new ArrayList<>(dataSource.getChatList().getValue());
