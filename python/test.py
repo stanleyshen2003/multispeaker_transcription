@@ -65,11 +65,13 @@ class Voice_process_agent():
         return model
     
     def determine_identical(self, voice1, voice2):
-        score, prediction = self.verification_model(voice1, voice2)
+        #voice1, voice2 = voice1.unsqueeze(0).unsqueeze(0), voice2.unsqueeze(0).unsqueeze(0)  # Add a batch dimension
+        voice1, voice2 = voice1[:,:16000], voice2[:,:16000]
+        score, prediction = self.verification_model.verify_batch(voice1, voice2, threshold=0.5)
         return prediction.item()
     
     def separate_files(self, file_name, save_separate = True):
-        result = self.model.separate_file(path=file_name)
+        result = self.separate_model.separate_file(path=file_name)
         
         if save_separate:
             for i in range(np.array(result.shape)[-1]):
@@ -80,7 +82,7 @@ class Voice_process_agent():
         for i in range(np.array(result.shape)[-1]):        
             result[:,:,i] = result[:,:,i].detach().cpu()
             found = False
-            for j in len(self.voice_record):
+            for j in range(len(self.voice_record)):
                 same = self.determine_identical(result[:,:,i], self.voice_record[j][0])
                 if same:
                     self.now_processing.append((result[:,:,i],j))
@@ -110,3 +112,4 @@ class Voice_process_agent():
 if __name__ == "__main__":
     agent = Voice_process_agent(need_load=False)
     agent.separate_files("test_mixture.wav", save_separate=False)
+    print(len(agent.voice_record))
