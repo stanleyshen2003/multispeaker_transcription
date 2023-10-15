@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="username">#3273a8</color>
+    <color name="bubble">#e3e5e6</color>
 </resources>
