@@ -46,16 +46,22 @@ class Voice_process_agent():
         output:
             model: a model that can call model.separate_file(path=your.wav)
         """
-        url = 'speechbrian/' + model_name if need_load else 'pretrained_models/' + model_name
-        model = separator.from_hparams(source=url, savdir='pretrained_models/'+model_name)
+        url = 'speechbrain/' + model_name if need_load else 'pretrained_models/' + model_name
+        model = separator.from_hparams(source=url, savedir='pretrained_models/'+model_name)
         return model
     
     def determine_identical(self,voice1 , voice2):
         pass
     
-    def separate_files(self, file_name):
+    def separate_files(self, file_name, save_separate):
         result = self.model.separate_file(path=file_name)
         
+        if save_separate:
+            for i in range(np.array(result.shape)[-1]):
+                fileout = "source" + str(i) + ".wav"
+                torchaudio.save(fileout, result[:, :, i].detach().cpu(), 8000)
+            return
+
         for i in range(np.array(result.shape)[-1]):        
             result[:,:,i] = result[:,:,i].detach().cpu()
             found = False
@@ -85,3 +91,7 @@ class Voice_process_agent():
 # for i in range(np.array(est_sources.shape)[-1]):
 #     fileout = "source" + str(i) + ".wav"
 #     torchaudio.save(fileout, est_sources[:, :, i].detach().cpu(), 8000)
+
+if __name__ == "__main__":
+    agent = Voice_process_agent(need_load=False)
+    agent.separate_files("test_mixture.wav", save_separate=True)
