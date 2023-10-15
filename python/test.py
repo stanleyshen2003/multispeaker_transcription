@@ -19,7 +19,7 @@ not used
 
 
 '''
-!!!! write your code here !!!!
+!!!! write your code under here !!!!
 '''
 class Voice_process_agent():
     '''
@@ -77,8 +77,7 @@ class Voice_process_agent():
             for i in range(np.array(result.shape)[-1]):
                 fileout = "source" + str(i) + ".wav"
                 torchaudio.save(fileout, result[:, :, i].detach().cpu(), 8000)
-            return
-
+            
         for i in range(np.array(result.shape)[-1]):        
             result[:,:,i] = result[:,:,i].detach().cpu()
             found = False
@@ -93,6 +92,9 @@ class Voice_process_agent():
                 self.voice_record.append((result[:,:,i],len(self.voice_record)))
             elif not found:
                 self.now_processing.append((result[:,:,i],-1))
+    
+    def deletenow(self):
+        self.now_processing = []
                 
                 
                 
@@ -110,6 +112,6 @@ class Voice_process_agent():
 #     torchaudio.save(fileout, est_sources[:, :, i].detach().cpu(), 8000)
 
 if __name__ == "__main__":
-    agent = Voice_process_agent(need_load=False)
-    agent.separate_files("test_mixture.wav", save_separate=False)
+    agent = Voice_process_agent(need_load=True)
+    agent.separate_files("test_mixture.wav", save_separate=True)
     print(len(agent.voice_record))
