@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "User 1",
+    "text": "Hey everyone, how's your day going?"
+  },
+  {
+    "id": 2,
+    "name": "User 2",
+    "text": "Hey Alex! Not too bad, just busy with work. How about you?"
+  },
+  {
+    "id": 3,
+    "name": "User 3",
+    "text": " I'm doing great, just got back from a weekend camping trip. It was awesome!"
+  },
+  {
+    "id": 5,
+    "name": "User 5",
+    "text": "Mike, I'm so jealous! I need a vacation ASAP."
+  },
+  {
+    "id": 6,
+    "name": "User 4",
+    "text": "Emily, I feel you. Let's plan something soon. Beach or mountains?"
+  },
+  {
+    "id": 7,
+    "name": "User 3",
+    "text": "I vote for the beach! I need some sun and relaxation."
+  },
+  {
+    "id": 8,
+    "name": "User 1",
+    "text": "Beach sounds good, but I'm down for whatever. Just need a break."
+  },
+  {
+    "id": 9,
+    "name": "User 5",
+    "text": "Beach it is then! I'll start looking for some cool spots."
+  },
+  {
+    "id": 10,
+    "name": "User 2",
+    "text": "Awesome! Can't wait to escape the daily grind."
+  }
+]
