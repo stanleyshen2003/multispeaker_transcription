@@ -1,4 +1,5 @@
 from speechbrain.pretrained import SepformerSeparation as separator
+from speechbrain.pretrained import SpeakerRecognition
 import torchaudio
 import os
 import numpy as np
@@ -26,9 +27,10 @@ class Voice_process_agent():
         separate_model_name: the model you want to use
         need_load: whether you have a local file of model
     '''
-    def __init__(self, separate_model_name = "sepformer-wsj02mix", need_load = True):
+    def __init__(self, separate_model_name = "sepformer-wsj02mix", verification_model_name = "spkrec-ecapa-voxceleb", need_load = True):
         self.maxPeople = 5
-        self.model = self.load_separate_model(separate_model_name, need_load)
+        self.separate_model = self.load_separate_model(separate_model_name, need_load)
+        self.verification_model = self.load_verify_model(verification_model_name, need_load)
         ''' 
         store all the audio files here
         format: list of tuple(audio, index)
@@ -59,11 +61,12 @@ class Voice_process_agent():
             model: a model that can call model.separate_file(path=your.wav)
         """
         url = 'speechbrain/' + model_name if need_load else 'pretrained_models/' + model_name
-        model = separator.from_hparams(source=url, savedir='pretrained_models/'+model_name)
+        model = SpeakerRecognition.from_hparams(source=url, savedir='pretrained_models/'+model_name)
         return model
     
-    def determine_identical(self,voice1 , voice2):
-        pass
+    def determine_identical(self, voice1, voice2):
+        score, prediction = self.verification_model(voice1, voice2)
+        return prediction.item()
     
     def separate_files(self, file_name, save_separate = True):
         result = self.model.separate_file(path=file_name)
