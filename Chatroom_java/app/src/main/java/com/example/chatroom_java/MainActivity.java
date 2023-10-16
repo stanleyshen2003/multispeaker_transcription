@@ -1,12 +1,22 @@
 package com.example.chatroom_hackthon
 
+//import static com.example.chatroom_java.Audio.AudioRecorder.audioRecorder;
 import static com.example.chatroom_java.data.LoadData.loadJSONFromAsset;
 import static com.example.chatroom_java.data.LoadData.parseChatJSON;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,13 +24,89 @@ import com.example.chatroom_java.chatList.ChatAdapter;
 import com.example.chatroom_java.data.Chat;
 import com.example.chatroom_java.data.DataSource;
 import com.example.chatroom_java.data.LoadData;
+import com.example.chatroom_java.Audio.*;
+import com.example.chatroom_java.Audio.IAudioCallback;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+public class MainActivity extends AppCompatActivity implements IAudioCallback{
+
+    private AudioRecorder audioRecorder;
+    private boolean isKeepTime;
+    /**
+     * 支持定时和周期性执行的线程池
+     */
+    private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(1);
+    private int time;
+    private static final int INITIAL_DELAY = 0;
+    private static final int PERIOD = 1000;
+    // 声明一个集合，在后面的代码中用来存储用户拒绝授权的权
+    private List<String> mPermissionList = new ArrayList<>();
+    private final static int ACCESS_FINE_ERROR_CODE = 0x0245;
+
+    private final static int HANDLER_CODE = 0x0249;
 
     private RecyclerView recyclerView;
     private ChatAdapter adapter;
+
+    private void initData() {
+        audioRecorder = AudioRecorder.getInstance(this);
+        scheduledThreadPool.scheduleAtFixedRate(() -> {
+            if (isKeepTime) {
+                ++time;
+            }
+        }, INITIAL_DELAY, PERIOD, TimeUnit.MILLISECONDS);
+
+        setPermissions(new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.WRITE_SETTINGS,
+                        Manifest.permission.RECORD_AUDIO},
+                ACCESS_FINE_ERROR_CODE);
+    }
+
+    private void setPermissions(String[] permissions, int permissionsCode) {
+        mPermissionList.clear();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            for (String permission : permissions) {
+                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    mPermissionList.add(permission);
+                }
+            }
+
+            //未授予的权限为空，表示都授予了
+            if (mPermissionList.isEmpty()) {
+                Context context = getApplicationContext();
+                int duration = Toast.LENGTH_SHORT;
+                Toast.makeText(context, "已经授权", duration);
+            } else {
+                //将List转为数组
+                permissions = mPermissionList.toArray(new String[mPermissionList.size()]);
+                ActivityCompat.requestPermissions(this, permissions, permissionsCode);
+            }
+        }
+    }
+    @Override
+    public void showPlay(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+//            //合成完后的操作，根据需要去做处理，此处用于测试播放
+//            audioRecorder.play(filePath);
+            Intent intent = new Intent(this, UploadingService.class);
+            intent.putExtra("test", "test");
+            startService(intent);
+        }
+    }
+    private boolean notRunning = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +123,7 @@ import java.util.List;
         adapter = new ChatAdapter(this, chatList != null ? chatList : new ArrayList<Chat>(), recyclerView);
         recyclerView.setAdapter(adapter);
 
+
         Button recButton = findViewById(R.id.rec_button);
         recButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +133,35 @@ import java.util.List;
                    function 可以寫在 folder Yihua/ 底下
                    新增檔案方式: 右鍵 Yihua >> New >>  Java Class >> Class
                    呼叫 function的方式: import com.example.chatroom_java.Yihua.你的檔名 */
+                if (notRunning) {
+                    notRunning = false;
+                    try {
+                        if (audioRecorder.getStatus() == AudioStatus.STATUS_NO_READY) {
+                            //初始化录音
+                            String fileName = new SimpleDateFormat("yyyyMMddhhmmss", Locale.TAIWAN).format(new Date());
+                            audioRecorder.createDefaultAudio(fileName);
+                            audioRecorder.startRecord();
+                            recButton.setBackgroundResource(R.drawable.square_shape);
+                            isKeepTime = true;
+                        } else {
+                            audioRecorder.startRecord();
+                            recButton.setBackgroundResource(R.drawable.square_shape);
+                            isKeepTime = true;
+                        }
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    audioRecorder.setReset();
+                    isKeepTime = false;
+                    audioRecorder.stopRecord();
+                    recButton.setBackgroundResource(R.mipmap.ic_record_white);
+                    time = 0;
+                    notRunning = true;
+                }
+
+
 
                 //-----------------------------------------------------------------------
                 String json = loadJSONFromAsset(getApplicationContext(), "chats.json");
