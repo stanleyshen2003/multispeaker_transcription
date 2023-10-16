@@ -5,6 +5,8 @@ import os
 import numpy as np
 from hyperpyyaml import load_hyperpyyaml
 import json
+import torch
+from speechbrain.pretrained import EncoderDecoderASR
 
 '''
 not used
@@ -39,7 +41,7 @@ class Voice_process_agent():
         '''
         self.voice_record = []
         self.now_processing = []
-
+        self.output_record = []
 
     def load_separate_model(self, model_name, need_load):
         """
@@ -65,6 +67,27 @@ class Voice_process_agent():
         model = SpeakerRecognition.from_hparams(source=url, savedir='pretrained_models/'+model_name)
         return model
     
+    def load_transcript_model(self):
+        return EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+
+    def resample(self, data):
+        original_sample_rate = data.shape[1]
+        target_sample_rate = data.shape[1] * 2
+        resampled_waveform = torchaudio.transforms.Resample(original_sample_rate, target_sample_rate)(data)
+        return resampled_waveform
+
+    def transcript(self):
+        model = self.load_transcript_model()
+        rel_len = torch.tensor([1.0])
+        for item in self.voice_record:
+            #print(item[0].shape)
+            reshape_item = self.resample(item[0])
+            #print(reshape_item.shape)
+            predicted_words, predicted_tokens = model.transcribe_batch(reshape_item, rel_len)
+            self.output_record.append((predicted_words[0], item[1]))
+            #print(self.output_record)
+
+
     def determine_identical(self, voice1, voice2):
         #voice1, voice2 = voice1.unsqueeze(0).unsqueeze(0), voice2.unsqueeze(0).unsqueeze(0)  # Add a batch dimension
         voice1, voice2 = voice1[:,:16000], voice2[:,:16000]
@@ -98,9 +121,9 @@ class Voice_process_agent():
         self.now_processing = []
 
     
-    def to_json():
+    def to_json(self):
         result_list = []
-        for record in voice_record:
+        for record in self.output_record:
             result_list.append({'txt':record[0], 'who':record[1]})
         result = json.dumps(result_list, indent=4)
         with open('ouput.json', 'w') as output:
@@ -121,4 +144,9 @@ class Voice_process_agent():
 #     fileout = "source" + str(i) + ".wav"
 #     torchaudio.save(fileout, est_sources[:, :, i].detach().cpu(), 8000)
 
-
+if __name__ == "__main__":
+    agent = Voice_process_agent(need_load=True)
+    agent.separate_files("test3.wav", save_separate=True)
+    agent.transcript()
+    agent.to_json()
+    print(len(agent.voice_record))
