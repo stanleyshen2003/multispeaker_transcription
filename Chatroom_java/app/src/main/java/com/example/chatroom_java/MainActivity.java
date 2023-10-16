@@ -6,6 +6,7 @@ import static com.example.chatroom_java.data.LoadData.parseChatJSON;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,10 @@ import com.example.chatroom_java.data.LoadData;
 import com.example.chatroom_java.Audio.*;
 import com.example.chatroom_java.Audio.IAudioCallback;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.ArrayList;
@@ -91,9 +96,17 @@ public class MainActivity extends AppCompatActivity implements IAudioCallback{
     }
     @Override
     public void showPlay(String filePath) {
-        // Implement the showPlay method here
-        // This method is called when the interface contract is met
+        File file = new File(filePath);
+        if (file.exists()) {
+//            //合成完后的操作，根据需要去做处理，此处用于测试播放
+//            audioRecorder.play(filePath);
+            Intent intent = new Intent(this, UploadingService.class);
+            intent.putExtra("test", "test");
+            startService(intent);
+        }
     }
+    private boolean notRunning = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements IAudioCallback{
         adapter = new ChatAdapter(this, chatList != null ? chatList : new ArrayList<Chat>(), recyclerView);
         recyclerView.setAdapter(adapter);
 
+
         Button recButton = findViewById(R.id.rec_button);
         recButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,33 +133,35 @@ public class MainActivity extends AppCompatActivity implements IAudioCallback{
                    function 可以寫在 folder Yihua/ 底下
                    新增檔案方式: 右鍵 Yihua >> New >>  Java Class >> Class
                    呼叫 function的方式: import com.example.chatroom_java.Yihua.你的檔名 */
-
-                        try {
-                            if (audioRecorder.getStatus() == AudioStatus.STATUS_NO_READY) {
-                                //初始化录音
-                                String fileName = new SimpleDateFormat("yyyyMMddhhmmss", Locale.CHINA).format(new Date());
-                                audioRecorder.createDefaultAudio(fileName);
-                                audioRecorder.startRecord();
-                                ivController.setImageResource(R.drawable.icon_start);
-                                isKeepTime = true;
-                                setClickable(true);
-                            } else {
-                                if (audioRecorder.getStatus() == AudioStatus.STATUS_START) {
-                                    phoneToPause();
-                                } else {
-                                    audioRecorder.startRecord();
-                                    ivController.setImageResource(R.drawable.icon_start);
-                                    isKeepTime = true;
-                                }
-                            }
-                        } catch (IllegalStateException e) {
-                            e.printStackTrace();
+                if (notRunning) {
+                    notRunning = false;
+                    try {
+                        if (audioRecorder.getStatus() == AudioStatus.STATUS_NO_READY) {
+                            //初始化录音
+                            String fileName = new SimpleDateFormat("yyyyMMddhhmmss", Locale.TAIWAN).format(new Date());
+                            audioRecorder.createDefaultAudio(fileName);
+                            audioRecorder.startRecord();
+                            recButton.setBackgroundResource(R.drawable.square_shape);
+                            isKeepTime = true;
+                        } else {
+                            audioRecorder.startRecord();
+                            recButton.setBackgroundResource(R.drawable.square_shape);
+                            isKeepTime = true;
                         }
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    audioRecorder.setReset();
+                    isKeepTime = false;
+                    audioRecorder.stopRecord();
+                    recButton.setBackgroundResource(R.mipmap.ic_record_white);
+                    time = 0;
+                    notRunning = true;
+                }
 
-                        /*
-                    case R.id.ll_finish:
-                        finishAndReset();
-                        break;*/
+
 
                 //-----------------------------------------------------------------------
                 String json = loadJSONFromAsset(getApplicationContext(), "chats.json");
