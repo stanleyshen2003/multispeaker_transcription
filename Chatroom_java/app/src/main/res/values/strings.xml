@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Chatroom_java</string>
+    <string name="record">Record</string>
+    <string name="user1_name">user1</string>
+    <string name="user2_name">user2</string>
+    <string name="user3_name">user3</string>
+
+    <string name="text1">hi</string>
+    <string name="text2">hello</string>
+    <string name="text3">hfdhfdzgahaeathaehs</string>
+    <string name="text4">gsjeagarhtjnfaf</string>
+    <string name="text5">tghqagragrg</string>
+    <string name="text6">hfjgrwgrsdfwdfwesdjksqsas</string>
+
+</resources>

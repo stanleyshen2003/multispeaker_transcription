@@ -1,7 +1,6 @@
 package com.example.chatroom_hackthon.data
 
 import android.content.res.Resources
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
 class DataSource(resources: Resources) {
@@ -14,7 +13,7 @@ class DataSource(resources: Resources) {
             chatsLiveData.postValue(listOf(chat))
         } else {
             val updatedList = currentList.toMutableList()
-            updatedList.add(chat) // 添加到列表末尾
+            updatedList.add(chat)
             chatsLiveData.postValue(updatedList)
         }
     }
@@ -26,7 +25,7 @@ class DataSource(resources: Resources) {
         return null
     }
 
-    fun getChatList(): LiveData<List<Chat>> {
+    fun getChatList(): MutableLiveData<List<Chat>> {
         return chatsLiveData
     }
 
