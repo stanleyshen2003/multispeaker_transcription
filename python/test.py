@@ -144,9 +144,19 @@ class Voice_process_agent():
 #     fileout = "source" + str(i) + ".wav"
 #     torchaudio.save(fileout, est_sources[:, :, i].detach().cpu(), 8000)
 
-if __name__ == "__main__":
-    agent = Voice_process_agent(need_load=True)
-    agent.separate_files("test3.wav", save_separate=True)
-    agent.transcript()
-    agent.to_json()
-    print(len(agent.voice_record))
+# if __name__ == "__main__":
+#     agent = Voice_process_agent(need_load=True)
+#     agent.separate_files("test4.wav", save_separate=True)
+#     agent.transcript()
+#     agent.to_json()
+#     print(len(agent.voice_record))
+
+# verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+# score, prediction = verification.verify_files("Keven.wav", "Stanely_2.wav")
+
+# print(prediction, score)
+
+from speechbrain.pretrained import EncoderDecoderASR
+
+asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
+print(asr_model.transcribe_file("test6.wav"))
