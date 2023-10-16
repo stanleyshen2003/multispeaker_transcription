@@ -1,5 +1,6 @@
 package com.example.chatroom_java;
 
+import static com.example.chatroom_java.Audio.AudioRecorder.audioRecorder;
 import static com.example.chatroom_java.data.LoadData.loadJSONFromAsset;
 import static com.example.chatroom_java.data.LoadData.parseChatJSON;
 
@@ -14,11 +15,12 @@ import com.example.chatroom_java.chatList.ChatAdapter;
 import com.example.chatroom_java.data.Chat;
 import com.example.chatroom_java.data.DataSource;
 import com.example.chatroom_java.data.LoadData;
+import com.example.chatroom_java.Audio.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, IAudioCallback, IPhoneState {
 
     private RecyclerView recyclerView;
     private ChatAdapter adapter;
@@ -47,6 +49,40 @@ public class MainActivity extends AppCompatActivity {
                    function 可以寫在 folder Yihua/ 底下
                    新增檔案方式: 右鍵 Yihua >> New >>  Java Class >> Class
                    呼叫 function的方式: import com.example.chatroom_java.Yihua.你的檔名 */
+                switch (v.getId()) {
+                    case R.id.iv_controller:
+                        try {
+                            if (audioRecorder.getStatus() == AudioStatus.STATUS_NO_READY) {
+                                //初始化录音
+                                String fileName = new SimpleDateFormat("yyyyMMddhhmmss", Locale.CHINA).format(new Date());
+                                audioRecorder.createDefaultAudio(fileName);
+                                audioRecorder.startRecord();
+                                ivController.setImageResource(R.drawable.icon_start);
+                                isKeepTime = true;
+                                setClickable(true);
+                            } else {
+                                if (audioRecorder.getStatus() == AudioStatus.STATUS_START) {
+                                    phoneToPause();
+                                } else {
+                                    audioRecorder.startRecord();
+                                    ivController.setImageResource(R.drawable.icon_start);
+                                    isKeepTime = true;
+                                }
+                            }
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case R.id.ll_finish:
+                        finishAndReset();
+                        break;
+
+                    case R.id.ll_reset:
+                        audioRecorder.setReset();
+                        finishAndReset();
+                        break;
+                }
 
                 //-----------------------------------------------------------------------
                 String json = loadJSONFromAsset(getApplicationContext(), "chats.json");
