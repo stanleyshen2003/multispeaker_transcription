@@ -1,4 +1,4 @@
-package com.example.chatroom_hackthon
+package com.example.chatroom_java;
 
 //import static com.example.chatroom_java.Audio.AudioRecorder.audioRecorder;
 import static com.example.chatroom_java.data.LoadData.loadJSONFromAsset;
@@ -10,10 +10,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -38,7 +40,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements IAudioCallback{
-
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private AudioRecorder audioRecorder;
     private boolean isKeepTime;
     /**
@@ -95,8 +97,26 @@ public class MainActivity extends AppCompatActivity implements IAudioCallback{
         }
     }
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int i = 0; i < grantResults.length; i++) {
+            boolean showRequestPermission = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i]);
+            if (showRequestPermission) {
+                showToast("权限未申请");
+            }
+        }
+    }
+
+    protected void showToast(String toastInfo) {
+        Toast.makeText(this, toastInfo, Toast.LENGTH_LONG).show();
+    }
+    @Override
     public void showPlay(String filePath) {
         File file = new File(filePath);
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(this , filePath, duration);
+        Log.d("FilePath",filePath);
         if (file.exists()) {
 //            //合成完后的操作，根据需要去做处理，此处用于测试播放
 //            audioRecorder.play(filePath);
@@ -107,11 +127,46 @@ public class MainActivity extends AppCompatActivity implements IAudioCallback{
     }
     private boolean notRunning = true;
 
+    private boolean checkPermissions() {
+        String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        List<String> permissionsToRequest = new ArrayList<>();
+
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(permission);
+            }
+        }
+
+        if (!permissionsToRequest.isEmpty()) {
+            String[] permissionsArray = permissionsToRequest.toArray(new String[0]);
+            ActivityCompat.requestPermissions(this, permissionsArray, REQUEST_RECORD_AUDIO_PERMISSION);
+            return false; // Permissions not granted yet
+        }
+
+        return true; // Permissions already granted
+    }
+
+    @Override
+    protected void onDestroy() {
+        audioRecorder.release();
+        audioRecorder.releaseAudioTrack();
+        scheduledThreadPool.shutdown();
+        super.onDestroy();
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (checkPermissions()) {
+            // Permissions have been granted, you can now proceed with audio recording
+            initData();
+        } else {
+            // Permissions have not been granted, and you should handle this accordingly
+        }
 
         recyclerView = findViewById(R.id.recycler_view);
 
@@ -127,17 +182,19 @@ public class MainActivity extends AppCompatActivity implements IAudioCallback{
         Button recButton = findViewById(R.id.rec_button);
         recButton.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View v) {
                 //TODO: ---------------------------------------------------
                 /* 寫一個function 可以每三秒鐘儲存一次 .wav
                    function 可以寫在 folder Yihua/ 底下
                    新增檔案方式: 右鍵 Yihua >> New >>  Java Class >> Class
                    呼叫 function的方式: import com.example.chatroom_java.Yihua.你的檔名 */
+
                 if (notRunning) {
                     notRunning = false;
                     try {
+                        audioRecorder = AudioRecorder.getInstance(MainActivity.this);
                         if (audioRecorder.getStatus() == AudioStatus.STATUS_NO_READY) {
-                            //初始化录音
                             String fileName = new SimpleDateFormat("yyyyMMddhhmmss", Locale.TAIWAN).format(new Date());
                             audioRecorder.createDefaultAudio(fileName);
                             audioRecorder.startRecord();
@@ -153,9 +210,12 @@ public class MainActivity extends AppCompatActivity implements IAudioCallback{
                     }
                 }
                 else{
+                    Log.d("Stop","Stop");
                     audioRecorder.setReset();
                     isKeepTime = false;
+
                     audioRecorder.stopRecord();
+                    Log.d("stopRecord","stopRecord");
                     recButton.setBackgroundResource(R.mipmap.ic_record_white);
                     time = 0;
                     notRunning = true;
