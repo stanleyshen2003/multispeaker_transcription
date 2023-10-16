@@ -7,6 +7,7 @@ from hyperpyyaml import load_hyperpyyaml
 import json
 import torch
 from speechbrain.pretrained import EncoderDecoderASR
+import speech_recognition as sr
 
 '''
 not used
@@ -77,15 +78,25 @@ class Voice_process_agent():
         return resampled_waveform
 
     def transcript(self):
-        model = self.load_transcript_model()
-        rel_len = torch.tensor([1.0])
-        for item in self.voice_record:
-            #print(item[0].shape)
-            reshape_item = self.resample(item[0])
-            #print(reshape_item.shape)
-            predicted_words, predicted_tokens = model.transcribe_batch(reshape_item, rel_len)
-            self.output_record.append((predicted_words[0], item[1]))
-            #print(self.output_record)
+        r = sr.Recognizer()
+
+        data = sr.AudioFile('src_sound/test2.wav')
+        with data as source:
+            audio = r.record(source)
+        try:
+            s = r.recognize_google(audio)
+            print("Text: "+s)
+        except Exception as e:
+            print("Exception: "+str(e))
+        # model = self.load_transcript_model()
+        # rel_len = torch.tensor([1.0])
+        # for item in self.voice_record:
+        #     #print(item[0].shape)
+        #     reshape_item = self.resample(item[0])
+        #     #print(reshape_item.shape)
+        #     predicted_words, predicted_tokens = model.transcribe_batch(reshape_item, rel_len)
+        #     self.output_record.append((predicted_words[0], item[1]))
+        #     #print(self.output_record)
 
 
     def determine_identical(self, voice1, voice2):
@@ -144,19 +155,14 @@ class Voice_process_agent():
 #     fileout = "source" + str(i) + ".wav"
 #     torchaudio.save(fileout, est_sources[:, :, i].detach().cpu(), 8000)
 
-# if __name__ == "__main__":
-#     agent = Voice_process_agent(need_load=True)
-#     agent.separate_files("test4.wav", save_separate=True)
-#     agent.transcript()
-#     agent.to_json()
-#     print(len(agent.voice_record))
+if __name__ == "__main__":
+    agent = Voice_process_agent(need_load=True)
+    #agent.separate_files("src/test4.wav", save_separate=True)
+    agent.transcript()
+    agent.to_json()
+    print(len(agent.voice_record))
 
 # verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
 # score, prediction = verification.verify_files("Keven.wav", "Stanely_2.wav")
 
 # print(prediction, score)
-
-from speechbrain.pretrained import EncoderDecoderASR
-
-asr_model = EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
-print(asr_model.transcribe_file("test6.wav"))
