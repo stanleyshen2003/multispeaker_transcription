@@ -1,10 +1,12 @@
 plugins {
     id 'com.android.application'
+    id "org.jetbrains.kotlin.android"
+    id "com.chaquo.python"
 }
 
 android {
     namespace 'com.example.chatroom_java'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.chatroom_java"
@@ -14,6 +16,16 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+        python {
+            pip {
+                install "matplotlib"
+                install "numpy"
+                install "speechbrain"
+            }
+        }
     }
 
     buildTypes {
