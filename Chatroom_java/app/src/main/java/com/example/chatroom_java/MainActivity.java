@@ -4,6 +4,7 @@ package com.example.chatroom_java;
 import static com.example.chatroom_java.data.LoadData.loadJSONFromAsset;
 import static com.example.chatroom_java.data.LoadData.parseChatJSON;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
