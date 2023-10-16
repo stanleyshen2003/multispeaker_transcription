@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements IAudioCallback{
                             String fileName = new SimpleDateFormat("yyyyMMddhhmmss", Locale.TAIWAN).format(new Date());
                             audioRecorder.createDefaultAudio(fileName);
                             Log.d("Start", "start");
+                            Log.d(fileName, fileName);
                             audioRecorder.startRecord();
                             recButton.setBackgroundResource(R.drawable.square_shape);
                             isKeepTime = true;

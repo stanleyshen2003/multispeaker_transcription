@@ -177,10 +177,12 @@ public class AudioRecorder {
                 for (String fileName : filesName) {
                     filePaths.add(FileUtils.getPcmFileAbsolutePath(fileName));
                 }
+                Log.i("File Location", "Found files at: " + filePaths);
                 //清除
                 filesName.clear();
                 if (isReset) {
                     isReset = false;
+                    Log.i("if", "if");
                     FileUtils.clearFiles(filePaths);
                 } else {
                     //将多个pcm文件转化为wav文件
@@ -304,6 +306,7 @@ public class AudioRecorder {
     private void pcmFilesToWavFile(final List<String> filePaths) {
         cachedThreadPool.execute(() -> {
             String filePath = FileUtils.getWavFileAbsolutePath(fileName);
+            Log.i("File Location", "Found file at: " + filePath);
             if (PcmToWav.mergePCMFilesToWAVFile(filePaths, filePath)) {
                 //合成后回调
                 if (iAudioCallback != null) {
