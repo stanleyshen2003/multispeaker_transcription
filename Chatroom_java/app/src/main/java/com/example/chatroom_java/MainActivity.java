@@ -1,4 +1,4 @@
-package com.example.chatroom_hackthon
+package com.example.chatroom_java;
 
 //import static com.example.chatroom_java.Audio.AudioRecorder.audioRecorder;
 import static com.example.chatroom_java.data.LoadData.loadJSONFromAsset;
