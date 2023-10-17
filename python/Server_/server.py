@@ -5,9 +5,6 @@ import json
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
 PORT = 65433        # Port to listenon-privileged ports are > 1023)
 
-def save_as_json(text, filename='output.json'):
-    with open(filename, 'w') as f:
-        json.dump(text, f)
 
 # Create a socket object
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -25,6 +22,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 break
             received_data += data
 
-        with open('received_song.wav', 'wb') as file:
+        with open('received_song.bin', 'wb') as file:
             file.write(received_data)
             print("File has been received and written successfully.")
