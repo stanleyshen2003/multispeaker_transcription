@@ -68,35 +68,23 @@ class Voice_process_agent():
         model = SpeakerRecognition.from_hparams(source=url, savedir='pretrained_models/'+model_name)
         return model
     
-    def load_transcript_model(self):
-        return EncoderDecoderASR.from_hparams(source="speechbrain/asr-crdnn-rnnlm-librispeech", savedir="pretrained_models/asr-crdnn-rnnlm-librispeech")
-
-    def resample(self, data):
-        original_sample_rate = data.shape[1]
-        target_sample_rate = data.shape[1] * 2
-        resampled_waveform = torchaudio.transforms.Resample(original_sample_rate, target_sample_rate)(data)
-        return resampled_waveform
+    def bin_to_tensor(self, bin):
+        array_data = np.frombuffer(bin, dtype=np.int16)
+        result = torch.from_numpy(array_data)
+        return result
 
     def transcript(self):
         r = sr.Recognizer()
 
-        data = sr.AudioFile('src_sound/test2.wav')
+        #data = sr.AudioFile('src_sound/test2.wav')
         with data as source:
             audio = r.record(source)
         try:
             s = r.recognize_google(audio)
+            self.output_record.append([s])
             print("Text: "+s)
         except Exception as e:
             print("Exception: "+str(e))
-        # model = self.load_transcript_model()
-        # rel_len = torch.tensor([1.0])
-        # for item in self.voice_record:
-        #     #print(item[0].shape)
-        #     reshape_item = self.resample(item[0])
-        #     #print(reshape_item.shape)
-        #     predicted_words, predicted_tokens = model.transcribe_batch(reshape_item, rel_len)
-        #     self.output_record.append((predicted_words[0], item[1]))
-        #     #print(self.output_record)
 
 
     def determine_identical(self, voice1, voice2):
