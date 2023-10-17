@@ -8,6 +8,7 @@ import json
 import torch
 from speechbrain.pretrained import EncoderDecoderASR
 import speech_recognition as sr
+import io 
 
 '''
 not used
@@ -33,7 +34,6 @@ class Voice_process_agent():
     '''
     def __init__(self, separate_model_name = "sepformer-wsj02mix", verification_model_name = "spkrec-ecapa-voxceleb", need_load = True):
         self.maxPeople = 5
-        self.separate_model = self.load_separate_model(separate_model_name, need_load)
         self.verification_model = self.load_verify_model(verification_model_name, need_load)
         ''' 
         store all the audio files here
@@ -44,17 +44,6 @@ class Voice_process_agent():
         self.now_processing = []
         self.output_record = []
 
-    def load_separate_model(self, model_name, need_load):
-        """
-        input:
-            model_name(string): the location of your model.
-            need_load(bool): whether you have to load from hugging face library
-        output:
-            model: a model that can call model.separate_file(path=your.wav)
-        """
-        url = 'speechbrain/' + model_name if need_load else 'pretrained_models/' + model_name
-        model = separator.from_hparams(source=url, savedir='pretrained_models/'+model_name)
-        return model
     
     def load_verify_model(self, model_name, need_load):
         """
@@ -68,10 +57,14 @@ class Voice_process_agent():
         model = SpeakerRecognition.from_hparams(source=url, savedir='pretrained_models/'+model_name)
         return model
     
-    def bin_to_tensor(self, bin):
-        array_data = np.frombuffer(bin, dtype=np.int16)
-        result = torch.from_numpy(array_data)
-        return result
+    def bin_to_tensor(self, binary):
+        # with open("source0.wav", "rb") as file:
+        #     binary = file.read()
+        waveform, sample_rate = torchaudio.load(io.BytesIO(binary))
+        return waveform
+
+
+
 
     def transcript(self):
         r = sr.Recognizer()
@@ -93,28 +86,28 @@ class Voice_process_agent():
         score, prediction = self.verification_model.verify_batch(voice1, voice2, threshold=0.5)
         return prediction.item()
     
-    def separate_files(self, file_name, save_separate = True):
-        result = self.separate_model.separate_file(path=file_name)
+    # def separate_files(self, file_name, save_separate = True):
+    #     result = self.separate_model.separate_file(path=file_name)
         
-        if save_separate:
-            for i in range(np.array(result.shape)[-1]):
-                fileout = "source" + str(i) + ".wav"
-                torchaudio.save(fileout, result[:, :, i].detach().cpu(), 8000)
+    #     if save_separate:
+    #         for i in range(np.array(result.shape)[-1]):
+    #             fileout = "source" + str(i) + ".wav"
+    #             torchaudio.save(fileout, result[:, :, i].detach().cpu(), 8000)
             
-        for i in range(np.array(result.shape)[-1]):        
-            result[:,:,i] = result[:,:,i].detach().cpu()
-            found = False
-            for j in range(len(self.voice_record)):
-                same = self.determine_identical(result[:,:,i], self.voice_record[j][0])
-                if same:
-                    self.now_processing.append((result[:,:,i],j))
-                    found = True
-                    break
-            if not found and len(self.voice_record) < self.maxPeople:
-                self.now_processing.append((result[:,:,i],len(self.voice_record)))
-                self.voice_record.append((result[:,:,i],len(self.voice_record)))
-            elif not found:
-                self.now_processing.append((result[:,:,i],-1))
+    #     for i in range(np.array(result.shape)[-1]):        
+    #         result[:,:,i] = result[:,:,i].detach().cpu()
+    #         found = False
+    #         for j in range(len(self.voice_record)):
+    #             same = self.determine_identical(result[:,:,i], self.voice_record[j][0])
+    #             if same:
+    #                 self.now_processing.append((result[:,:,i],j))
+    #                 found = True
+    #                 break
+    #         if not found and len(self.voice_record) < self.maxPeople:
+    #             self.now_processing.append((result[:,:,i],len(self.voice_record)))
+    #             self.voice_record.append((result[:,:,i],len(self.voice_record)))
+    #         elif not found:
+    #             self.now_processing.append((result[:,:,i],-1))
     
     def deletenow(self):
         self.now_processing = []
@@ -146,7 +139,7 @@ class Voice_process_agent():
 if __name__ == "__main__":
     agent = Voice_process_agent(need_load=True)
     #agent.separate_files("src/test4.wav", save_separate=True)
-    agent.transcript()
+    #agent.transcript()
     agent.to_json()
     print(len(agent.voice_record))
 
