@@ -6,7 +6,6 @@ import numpy as np
 from hyperpyyaml import load_hyperpyyaml
 import json
 import torch
-from speechbrain.pretrained import EncoderDecoderASR
 import speech_recognition as sr
 import io 
 
@@ -58,18 +57,18 @@ class Voice_process_agent():
         return model
     
     def bin_to_tensor(self, binary):
+        # test binary file dealing:
         # with open("source0.wav", "rb") as file:
         #     binary = file.read()
         waveform, sample_rate = torchaudio.load(io.BytesIO(binary))
         return waveform
 
-
-
-
     def transcript(self):
         r = sr.Recognizer()
 
-        #data = sr.AudioFile('src_sound/test2.wav')
+        # binary file would be altered with binary file_name(if can)
+        data = sr.AudioFile(binary)
+
         with data as source:
             audio = r.record(source)
         try:
@@ -139,7 +138,7 @@ class Voice_process_agent():
 if __name__ == "__main__":
     agent = Voice_process_agent(need_load=True)
     #agent.separate_files("src/test4.wav", save_separate=True)
-    #agent.transcript()
+    agent.transcript()
     agent.to_json()
     print(len(agent.voice_record))
 
