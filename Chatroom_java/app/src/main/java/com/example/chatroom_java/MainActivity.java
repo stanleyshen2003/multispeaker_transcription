@@ -132,9 +132,6 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.ENGLISH);
         Date current = new Date();
         recordFile = "Recording_"+ format1.format(current) +".3gp";
-        Log.d("recordFilePath",recordFilePath);
-        Log.d("recordFile",recordFile);
-        Log.d("recordFileSize", String.valueOf(recordFile.length()));
         Toast toastStart = Toast.makeText(this, "Recording started",Toast.LENGTH_SHORT);
         toastStart.show();
         mediaRecorder = new MediaRecorder();
@@ -151,6 +148,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (isRecording) {
+            stopRecording();
+        }
+    }
 
     private void stopRecording() {
         if (mediaRecorder != null) {
@@ -170,13 +174,7 @@ public class MainActivity extends AppCompatActivity {
             toastStop.show();
         }
     }
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (isRecording) {
-            stopRecording();
-        }
-    }
+
+
 
 }
-
