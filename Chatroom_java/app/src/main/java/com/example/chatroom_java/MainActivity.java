@@ -65,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         recButton = findViewById(R.id.rec_button);
+        //todo 把它包在lopp 裡
+        Chat newChat = new Chat(1,"New chat message", R.drawable.user_image,"Your Name" );
+        chatList.add(newChat);
+        adapter.notifyDataSetChanged();
     }
     //別動--------------------------------------------------------------------------------------------
     @Override
