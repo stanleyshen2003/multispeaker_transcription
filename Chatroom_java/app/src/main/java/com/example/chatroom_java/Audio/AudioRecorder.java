@@ -7,6 +7,7 @@ import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.chatroom_java.Audio.IAudioCallback;
 
@@ -176,13 +177,16 @@ public class AudioRecorder {
                 for (String fileName : filesName) {
                     filePaths.add(FileUtils.getPcmFileAbsolutePath(fileName));
                 }
+                Log.i("File Location", "Found files at: " + filePaths);
                 //清除
                 filesName.clear();
                 if (isReset) {
                     isReset = false;
+                    Log.i("if", "if");
                     FileUtils.clearFiles(filePaths);
                 } else {
                     //将多个pcm文件转化为wav文件
+                    Log.d("pcm","pcm");
                     pcmFilesToWavFile(filePaths);
                 }
             }
@@ -248,6 +252,7 @@ public class AudioRecorder {
      * 将音频信息写入文件
      */
     private void writeDataTOFile() {
+
         // new一个byte数组用来存一些字节数据，大小为缓冲区大小
         byte[] audioData = new byte[bufferSizeInBytes];
         FileOutputStream fos = null;
@@ -264,6 +269,7 @@ public class AudioRecorder {
                 file.delete();
             }
             // 建立一个可存取字节的文件
+
             fos = new FileOutputStream(file);
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -300,6 +306,7 @@ public class AudioRecorder {
     private void pcmFilesToWavFile(final List<String> filePaths) {
         cachedThreadPool.execute(() -> {
             String filePath = FileUtils.getWavFileAbsolutePath(fileName);
+            Log.i("File Location", "Found file at: " + filePath);
             if (PcmToWav.mergePCMFilesToWAVFile(filePaths, filePath)) {
                 //合成后回调
                 if (iAudioCallback != null) {
