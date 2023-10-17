@@ -24,7 +24,7 @@ not used
 class Voice_process_agent():
     '''
     init:
-        separate_model_name: the model you want to use
+        separate_modvel_name: the model you want to use
         need_load: whether you have a local file of model
     '''
     def __init__(self, separate_model_name = "sepformer-wsj02mix", verification_model_name = "spkrec-ecapa-voxceleb", need_load = True):
@@ -93,6 +93,11 @@ class Voice_process_agent():
                 self.voice_record.append((result[:,:,i],len(self.voice_record)))
             elif not found:
                 self.now_processing.append((result[:,:,i],-1))
+    def verify_file():
+        verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+        score, prediction = verification.verify_files("speechbrain/spkrec-ecapa-voxceleb/example1.wav", "speechbrain/spkrec-ecapa-voxceleb/example2.flac")
+
+        print(prediction, score)
                 
                 
                 
