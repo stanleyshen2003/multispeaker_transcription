@@ -17,6 +17,7 @@ import com.example.chatroom_wav.data.DataSource
 import com.example.chatroom_wav.data.loadJSONFromAsset
 import com.example.chatroom_wav.data.parseChatJSON
 import com.example.chatroom_wav.R
+import com.example.chatroom_wav.data.Chat
 import com.example.chatroom_wav.wave.RecorderState
 import com.example.chatroom_wav.wave.WaveRecorder
 
@@ -66,6 +67,12 @@ class MainActivity : AppCompatActivity() {
                 else -> {}
             }
         }
+        //todo
+        val newChat = Chat(id = 7, name = "New User", image = R.drawable.user_image, text = "New Message")
+        dataSource.addChat(newChat)
+        adapter.updateData(dataSource.getChatList().value ?: emptyList())
+        recyclerView.adapter = adapter
+        //========================================
 
         val recButton = findViewById<Button>(R.id.rec_button)
         recButton.setOnClickListener {
