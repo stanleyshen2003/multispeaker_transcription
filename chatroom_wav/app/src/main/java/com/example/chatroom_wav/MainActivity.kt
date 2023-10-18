@@ -67,10 +67,11 @@ class MainActivity : AppCompatActivity() {
                 else -> {}
             }
         }
+        waveRecorder.noiseSuppressorActive = true
         //todo
         val newChat = Chat(id = 7, name = "New User", image = R.drawable.user_image, text = "New Message")
         dataSource.addChat(newChat)
-        adapter.updateData(dataSource.getChatList().value ?: emptyList())
+        adapter = ChatAdapter(this, chatList ?: emptyList(), recyclerView)
         recyclerView.adapter = adapter
         //========================================
 
