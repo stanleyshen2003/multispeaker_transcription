@@ -1,17 +1,18 @@
 plugins {
+    kotlin("android") version "1.5.31"
+    kotlin("android.extensions") version "1.5.31"
+    kotlin("android.parcelize") version "1.5.31"
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.chaquo.python")
 }
 
 android {
     namespace = "com.example.chatroom_hackthon"
-    compileSdk = 33
+    compileSdk = 32
 
     defaultConfig {
         applicationId = "com.example.chatroom_hackthon"
-        minSdk = 24
-        targetSdk = 33
+        minSdk = 16
+        targetSdk = 32
         versionCode = 1
         versionName = "1.0"
 
@@ -32,13 +33,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 

@@ -1,4 +1,4 @@
-package com.example.chatroom_hackthon
+package com.example.chatroom_wav
 
 import ChatAdapter
 import android.Manifest
@@ -13,11 +13,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatroom_hackthon.data.DataSource
-import com.example.chatroom_hackthon.data.loadJSONFromAsset
-import com.example.chatroom_hackthon.data.parseChatJSON
-import com.example.chatroom_hackthon.wave.RecorderState
-import com.example.chatroom_hackthon.wave.WaveRecorder
+import com.example.chatroom_wav.data.DataSource
+import com.example.chatroom_wav.data.loadJSONFromAsset
+import com.example.chatroom_wav.data.parseChatJSON
+import com.example.chatroom_wav.R
+import com.example.chatroom_wav.wave.RecorderState
+import com.example.chatroom_wav.wave.WaveRecorder
 
 
 class MainActivity : AppCompatActivity() {
