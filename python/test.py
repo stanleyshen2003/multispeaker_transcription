@@ -66,7 +66,7 @@ class Voice_process_agent():
 
 
 
-    def transcript(self):
+    def transcript(self, binary):
         r = sr.Recognizer()
         # binary file would be altered with binary file_name(if can)
         binary = io.BytesIO(binary)
@@ -76,7 +76,7 @@ class Voice_process_agent():
             audio = r.record(source)
         try:
             s = r.recognize_google(audio)
-            self.output_record.append([s])
+            self.output_record.append([s,0])
             print("Text: "+s)
         except Exception as e:
             print("Exception: "+str(e))
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     agent = Voice_process_agent(need_load=True)
     #agent.separate_files("src/test4.wav", save_separate=True)
     #agent.transcript()
-    agent.to_json()
+    agent.process('src_sound/test2.wav')
     print(len(agent.voice_record))
 
 # verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
