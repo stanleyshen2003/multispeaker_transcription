@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.chatroom_hackthon">
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.chatroom_wav">
 
-
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,9 +12,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Chatroom_hackthon">
+        android:theme="@style/Theme.Chatroom_wav"
+        tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.chatroom_wav.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
