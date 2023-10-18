@@ -20,6 +20,8 @@ import com.example.chatroom_wav.R
 import com.example.chatroom_wav.data.Chat
 import com.example.chatroom_wav.wave.RecorderState
 import com.example.chatroom_wav.wave.WaveRecorder
+import java.util.Timer
+import java.util.TimerTask
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +35,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var filePath: String
     private var isRecording = false
 
+    private val timer = Timer()
+    private lateinit var cancelTask: TimerTask
+    private var isTimerScheduled = false
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recycler_view)
 
         val dataSource = DataSource.getDataSource(resources)
-        val chatList = dataSource.getChatList().value
+        val chatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
 
         recyclerView.layoutManager =
             LinearLayoutManager(this) // 设置LayoutManager为LinearLayoutManager
@@ -67,12 +74,32 @@ class MainActivity : AppCompatActivity() {
                 else -> {}
             }
         }
-        waveRecorder.noiseSuppressorActive = true
+        waveRecorder.noiseSuppressorActive=true
         //todo
+
+
+
+
         val newChat = Chat(id = 7, name = "New User", image = R.drawable.user_image, text = "New Message")
-        dataSource.addChat(newChat)
-        adapter = ChatAdapter(this, chatList ?: emptyList(), recyclerView)
-        recyclerView.adapter = adapter
+        val updatedChatList = chatList?.toMutableList() ?: mutableListOf()
+        val iterations = 5
+        var count = 0
+
+
+        cancelTask = object : TimerTask() {
+            override fun run() {
+                count++
+                // Add the new chat to the current chatList and update the adapter
+
+                updatedChatList.add(newChat)
+
+                runOnUiThread {
+                    adapter.updateData(updatedChatList)
+                }
+            }
+        }
+
+
         //========================================
 
         val recButton = findViewById<Button>(R.id.rec_button)
@@ -92,9 +119,11 @@ class MainActivity : AppCompatActivity() {
                     )
                 } else {
                     waveRecorder.startRecording()
+                    timer.schedule(cancelTask, 0, 3000)
                 }
             } else {
                 waveRecorder.stopRecording()
+                timer.cancel()
             }
             //----------------------------
             val json = loadJSONFromAsset(baseContext, "chats.json")
@@ -114,11 +143,13 @@ class MainActivity : AppCompatActivity() {
     private fun startRecording() {
         Log.d(TAG, waveRecorder.audioSessionId.toString())
         isRecording = true
+        cancelTimerTask()
     }
 
     private fun stopRecording() {
         isRecording = false
         Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
+        scheduleTimerTask()
     }
 
 
@@ -144,6 +175,22 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "MainActivity"
     }
+    override fun onDestroy() {
+        super.onDestroy()
+        // Ensure you cancel the timer when the activity is destroyed to avoid memory leaks
+        timer.cancel()
+    }
+    private fun scheduleTimerTask() {
+        if (!isRecording && !isTimerScheduled) {
+            timer.schedule(cancelTask, 0, 3000)
+            isTimerScheduled = true // Mark the timer as scheduled
+        }
+    }
+    private fun cancelTimerTask() {
+        if (!isRecording && isTimerScheduled) {
+            cancelTask.cancel()
+            isTimerScheduled = false // Mark the timer as not scheduled
+        }
+    }
 
 }
-
