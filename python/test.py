@@ -27,34 +27,6 @@ not used
 !!!! write your code under here !!!!
 '''
 
-class Load_Audio(sr.AudioFile):
-    def __init__(self, file_object):
-        super().__init__(file_object)
-        self.audio_reader = file_object
-
-    def enter(self):
-        self.little_endian = True
-        assert 1 <= self.audio_reader.getnchannels() <= 2, "Audio must be mono or stereo"
-        self.SAMPLE_WIDTH = self.audio_reader.getsampwidth()
-
-        # 24-bit audio needs some special handling for old Python versions (workaround for https://bugs.python.org/issue12866)
-        samples_24_bit_pretending_to_be_32_bit = False
-        if self.SAMPLE_WIDTH == 3:  # 24-bit audio
-            try: audioop.bias(b"", self.SAMPLE_WIDTH, 0)  # test whether this sample width is supported (for example, ``audioop`` in Python 3.3 and below don't support sample width 3, while Python 3.4+ do)
-            except audioop.error:  # this version of audioop doesn't support 24-bit audio (probably Python 3.3 or less)
-                samples_24_bit_pretending_to_be_32_bit = True  # while the ``AudioFile`` instance will outwardly appear to be 32-bit, it will actually internally be 24-bit
-                self.SAMPLE_WIDTH = 4  # the ``AudioFile`` instance should present itself as a 32-bit stream now, since we'll be converting into 32-bit on the fly when reading
-
-        self.SAMPLE_RATE = self.audio_reader.getframerate()
-        self.CHUNK = 4096
-        self.FRAME_COUNT = self.audio_reader.getnframes()
-        self.DURATION = self.FRAME_COUNT / float(self.SAMPLE_RATE)
-        self.stream = AudioFile.AudioFileStream(self.audio_reader, self.little_endian, samples_24_bit_pretending_to_be_32_bit)
-        return self
-
-
-
-
 class Voice_process_agent():
     '''
     init:
@@ -95,9 +67,9 @@ class Voice_process_agent():
 
     def transcript(self, binary):
         r = sr.Recognizer()
-
         # binary file would be altered with binary file_name(if can)
-        data = Load_Audio(binary)
+        binary = io.BytesIO(binary)
+        data = sr.AudioFile(binary)
 
         with data as source:
             audio = r.record(source)
@@ -152,9 +124,9 @@ class Voice_process_agent():
 
 
     def process(self, path):
-        file = open(path, "rb")
-        tensor_file = self.bin_to_tensor(file.read())
-        text = self.transcript(path)
+        file = open(path, "rb").read()
+        tensor_file = self.bin_to_tensor(file)
+        text = self.transcript(file)
         self.to_json()
 
 
