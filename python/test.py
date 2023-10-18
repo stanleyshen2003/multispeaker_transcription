@@ -6,9 +6,9 @@ import numpy as np
 from hyperpyyaml import load_hyperpyyaml
 import json
 import torch
+from speechbrain.pretrained import EncoderDecoderASR
 import speech_recognition as sr
 import io 
-import wave 
 
 '''
 not used
@@ -26,7 +26,6 @@ not used
 '''
 !!!! write your code under here !!!!
 '''
-
 class Voice_process_agent():
     '''
     init:
@@ -59,13 +58,15 @@ class Voice_process_agent():
         return model
     
     def bin_to_tensor(self, binary):
-        # test binary file dealing:
         # with open("source0.wav", "rb") as file:
         #     binary = file.read()
         waveform, sample_rate = torchaudio.load(io.BytesIO(binary))
         return waveform
 
-    def transcript(self, binary):
+
+
+
+    def transcript(self):
         r = sr.Recognizer()
         # binary file would be altered with binary file_name(if can)
         binary = io.BytesIO(binary)
@@ -75,7 +76,7 @@ class Voice_process_agent():
             audio = r.record(source)
         try:
             s = r.recognize_google(audio)
-            self.output_record.append([s,'0'])
+            self.output_record.append([s])
             print("Text: "+s)
         except Exception as e:
             print("Exception: "+str(e))
@@ -149,13 +150,11 @@ class Voice_process_agent():
 if __name__ == "__main__":
     agent = Voice_process_agent(need_load=True)
     #agent.separate_files("src/test4.wav", save_separate=True)
-    agent.process('test.bin')
+    #agent.transcript()
+    agent.to_json()
+    print(len(agent.voice_record))
 
 # verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
 # score, prediction = verification.verify_files("Keven.wav", "Stanely_2.wav")
 
 # print(prediction, score)
-
-# file = open("src_sound/test2.wav", "rb").read()
-# output = open("test.bin", "wb").write(file)
-
