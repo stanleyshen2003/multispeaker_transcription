@@ -3,6 +3,7 @@ package com.example.chatroom_java;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static com.example.chatroom_java.data.LoadData.loadJSONFromAsset;
 import static com.example.chatroom_java.data.LoadData.parseChatJSON;
+import static com.example.chatroom_java.data.SocketClient.*;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,17 +15,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.os.AsyncTask;
 
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatroom_java.chatList.ChatAdapter;
 import com.example.chatroom_java.data.Chat;
 import com.example.chatroom_java.data.DataSource;
+import com.example.chatroom_java.data.SocketClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +37,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,10 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         recButton = findViewById(R.id.rec_button);
-        //todo 把它包在lopp 裡
-        Chat newChat = new Chat(1,"New chat message", R.drawable.user_image,"Your Name" );
-        chatList.add(newChat);
-        adapter.notifyDataSetChanged();
     }
     //別動--------------------------------------------------------------------------------------------
     @Override
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION_CODE);
     }
 
-    public void recording(View view) {
+    public void recording(View view) throws IOException {
         if (CheckPermissions()) {
             if(isRecording){
                 stopRecording();
@@ -128,14 +132,14 @@ public class MainActivity extends AppCompatActivity {
         }, 100);
     }
 
-    private void startRecording(){
+    private void startRecording() throws IOException {
 
         recButton.setBackgroundResource(R.drawable.square_shape);
         recordFilePath = this.getExternalFilesDir("/").getAbsolutePath();
-        Log.d("ecordFilePath",recordFilePath);
+        Log.d("recordFilePath",recordFilePath);
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.ENGLISH);
         Date current = new Date();
-        recordFile = "Recording_"+ format1.format(current) +".3gp";
+        recordFile = "Recording_"+ format1.format(current) +".wav";
         Log.d("recordFilePath",recordFilePath);
         Log.d("recordFile",recordFile);
         Log.d("recordFileSize", String.valueOf(recordFile.length()));
@@ -169,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
             mediaRecorder.release();
             mediaRecorder = null;
 
+            String serverAddress = "172.16.168.1";
+            int serverPort = 8082;
+            new SocketClient(serverAddress, serverPort, recordFilePath + "/" + recordFile).execute();
+
             recButton.setBackgroundResource(R.drawable.record_button_background);
             Toast toastStop = Toast.makeText(getBaseContext(), "Recording stopped", Toast.LENGTH_SHORT);
             toastStop.show();
@@ -181,7 +189,5 @@ public class MainActivity extends AppCompatActivity {
             stopRecording();
         }
     }
-
-
 }
 

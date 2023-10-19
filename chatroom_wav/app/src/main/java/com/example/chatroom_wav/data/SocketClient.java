@@ -1,4 +1,4 @@
-package com.example.chatroom_java.data;
+package com.example.chatroom_wav.data;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class SocketClient extends AsyncTask<String, Integer, String> {
     private String dstAddress;
@@ -29,22 +31,20 @@ public class SocketClient extends AsyncTask<String, Integer, String> {
             Socket socket = new Socket(dstAddress, dstPort);
             System.out.println("Just connected to " + socket.getRemoteSocketAddress());
 
-            byte[] bytes = new byte[1024];
-            System.out.println(this.file_path);
-            BufferedOutputStream in = new BufferedOutputStream(new FileOutputStream(this.file_path));
-            inputStream = new BufferedInputStream(socket.getInputStream());
-            while (true) {
-                int bytesRead = inputStream.read(bytes);
-                System.out.println("Send wav file");
-                if (bytesRead < 0) break;
-                in.write(bytes, 0, bytesRead);
-                // Now it loops around to read some more.
-            }
-            in.close();
+            OutputStream io = socket.getOutputStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            BufferedInputStream in = new BufferedInputStream(new FileInputStream(this.file_path));
 
-            // Read the response from the server
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            response = bufferedReader.readLine();
+            int read;
+            byte[] buff = new byte[2048];
+            while ((read = in.read(buff)) > 0)
+            {
+                out.write(buff, 0, read);
+            }
+            out.flush();
+            byte[] audioBytes = out.toByteArray();
+            System.out.println(audioBytes);
+            io.write(audioBytes);
 
             // Close the connection
             socket.close();
