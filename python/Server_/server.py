@@ -1,5 +1,6 @@
 import socket
 import json
+import process
 
 # Define the host and port
 HOST = '172.16.168.1'  # Standard loopback interface address (localhost)
@@ -12,6 +13,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     # Listen for incoming connections
     s.listen()
+    agent = Voice_process_agent(need_load=True)
     print('Server is listening on', HOST, 'port', PORT)
     while True:
         client, address = s.accept()
@@ -22,6 +24,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 break
             received_data += data
         print(received_data)
+        agent.process('Server_/received_song.bin')
         with open('received_song.wav', 'wb') as file:
             file.write(received_data)
             print("File has been received and written successfully.")
