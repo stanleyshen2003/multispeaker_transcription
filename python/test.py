@@ -151,7 +151,7 @@ if __name__ == "__main__":
     agent = Voice_process_agent(need_load=True)
     #agent.separate_files("src/test4.wav", save_separate=True)
     #agent.transcript()
-    agent.process('src_sound/test2.wav')
+    agent.process('python/Server_/received_song.wav')
     print(len(agent.voice_record))
 
 # verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")

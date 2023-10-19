@@ -13,11 +13,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chatroom_wav.data.Chat
 import com.example.chatroom_wav.data.DataSource
+import com.example.chatroom_wav.data.SocketClient
 import com.example.chatroom_wav.data.loadJSONFromAsset
 import com.example.chatroom_wav.data.parseChatJSON
-import com.example.chatroom_wav.R
-import com.example.chatroom_wav.data.Chat
 import com.example.chatroom_wav.wave.RecorderState
 import com.example.chatroom_wav.wave.WaveRecorder
 import java.util.Timer
@@ -119,11 +119,11 @@ class MainActivity : AppCompatActivity() {
                     )
                 } else {
                     waveRecorder.startRecording()
-                    timer.schedule(cancelTask, 0, 3000)
+                    //timer.schedule(cancelTask, 0, 3000)
                 }
             } else {
                 waveRecorder.stopRecording()
-                timer.cancel()
+                //timer.cancel()
             }
             //----------------------------
             val json = loadJSONFromAsset(baseContext, "chats.json")
@@ -143,13 +143,17 @@ class MainActivity : AppCompatActivity() {
     private fun startRecording() {
         Log.d(TAG, waveRecorder.audioSessionId.toString())
         isRecording = true
-        cancelTimerTask()
+        //cancelTimerTask()
     }
 
     private fun stopRecording() {
         isRecording = false
         Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
-        scheduleTimerTask()
+        val serverAddress = "172.16.168.1"
+        val serverPort = 8082
+        SocketClient(serverAddress, serverPort, filePath).execute()
+
+        //scheduleTimerTask()
     }
 
 
@@ -178,7 +182,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         // Ensure you cancel the timer when the activity is destroyed to avoid memory leaks
-        timer.cancel()
+        //timer.cancel()
     }
     private fun scheduleTimerTask() {
         if (!isRecording && !isTimerScheduled) {

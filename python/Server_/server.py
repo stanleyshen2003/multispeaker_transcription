@@ -21,7 +21,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             if not data:
                 break
             received_data += data
-
+        print(received_data)
         with open('received_song.wav', 'wb') as file:
             file.write(received_data)
             print("File has been received and written successfully.")
