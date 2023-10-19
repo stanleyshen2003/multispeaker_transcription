@@ -143,13 +143,13 @@ class MainActivity : AppCompatActivity() {
     private fun startRecording() {
         Log.d(TAG, waveRecorder.audioSessionId.toString())
         isRecording = true
-        cancelTimerTask()
+//        cancelTimerTask()
     }
 
     private fun stopRecording() {
         isRecording = false
         Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
-        scheduleTimerTask()
+//        scheduleTimerTask()
     }
 
 
