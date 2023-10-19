@@ -119,17 +119,25 @@ class MainActivity : AppCompatActivity() {
                     )
                 } else {
                     waveRecorder.startRecording()
-                    //timer.schedule(cancelTask, 0, 3000)
+//                    timer.schedule(cancelTask, 0, 3000)
                 }
             } else {
                 waveRecorder.stopRecording()
-                //timer.cancel()
+//                timer.cancel()
             }
             //----------------------------
-            val json = loadJSONFromAsset(baseContext, "chats.json")
+            val json = loadJSONFromAsset(baseContext, "chats1.json")
             val chatList = parseChatJSON(json)
             val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
-            currentChatList.addAll(chatList)
+            if (currentChatList.isNotEmpty() && currentChatList.last().name == chatList.first().name) {
+                currentChatList[currentChatList.lastIndex] = currentChatList.last().copy(
+                    text = currentChatList.last().text + " " + chatList.first().text
+                )
+                currentChatList.addAll(chatList.subList(1, chatList.size))
+            } else {
+                currentChatList.addAll(chatList)
+            }
+            Log.d("current", currentChatList.toString())
 
             dataSource.getChatList().postValue(currentChatList)
             adapter.updateData(currentChatList)
@@ -143,7 +151,7 @@ class MainActivity : AppCompatActivity() {
     private fun startRecording() {
         Log.d(TAG, waveRecorder.audioSessionId.toString())
         isRecording = true
-        //cancelTimerTask()
+//        cancelTimerTask()
     }
 
     private fun stopRecording() {
