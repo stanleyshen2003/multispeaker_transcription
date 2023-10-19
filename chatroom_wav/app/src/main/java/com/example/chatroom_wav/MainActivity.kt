@@ -90,11 +90,37 @@ class MainActivity : AppCompatActivity() {
                     count++
                     // Add the new chat to the current chatList and update the adapter
                     Log.d("count", count.toString())
+
+                    //add
+
+                    val json = loadJSONFromAsset(baseContext, "chats1.json")
+                    val chatList = parseChatJSON(json)
+                    val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
+
+                    if (currentChatList.isNotEmpty() && currentChatList.last().name == chatList.first().name) {
+                        currentChatList[currentChatList.lastIndex] = currentChatList.last().copy(
+                            text = currentChatList.last().text + " " + chatList.first().text
+                        )
+                        currentChatList.addAll(chatList.subList(1, chatList.size))
+                    } else {
+                        currentChatList.addAll(chatList)
+                    }
+
+
+                    dataSource.getChatList().postValue(currentChatList)
+                    runOnUiThread {
+                        adapter.updateData(currentChatList)
+                    }
+                    recyclerView.postDelayed({
+                        recyclerView.smoothScrollToPosition(currentChatList.size - 1)
+                    }, 100)
+                    //
+                    /*
                     updatedChatList.add(newChat)
 
                     runOnUiThread {
                         adapter.updateData(updatedChatList)
-                    }
+                    }*/
                 }
             }
         }
@@ -163,7 +189,6 @@ class MainActivity : AppCompatActivity() {
     private fun startRecording() {
         Log.d(TAG, waveRecorder.audioSessionId.toString())
         isRecording = true
-//        cancelTimerTask()
     }
 
     private fun stopRecording() {
@@ -172,8 +197,6 @@ class MainActivity : AppCompatActivity() {
         val serverAddress = "172.16.168.1"
         val serverPort = 8082
         SocketClient(serverAddress, serverPort, filePath).execute()
-
-        //scheduleTimerTask()
     }
 
 
@@ -203,15 +226,5 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         // Ensure you cancel the timer when the activity is destroyed to avoid memory leaks
         timer?.cancel()
-        //timer.cancel()
     }
-    /*private fun scheduleTimerTask() {
-        timer?.schedule(cancelTask, 0, 3000)
-        isTimerScheduled = true // Mark the timer as scheduled
-    }
-    private fun cancelTimerTask() {
-        cancelTask.cancel()
-        isTimerScheduled = false // Mark the timer as not scheduled
-    }
-    */
 }
