@@ -35,8 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var filePath: String
     private var isRecording = false
 
-    private val timer = Timer()
-    private lateinit var cancelTask: TimerTask
+    private var timer: Timer? = null
     private var isTimerScheduled = false
 
 
@@ -85,26 +84,39 @@ class MainActivity : AppCompatActivity() {
         val iterations = 5
         var count = 0
 
+        fun createCancelTask(): TimerTask {
+            return object : TimerTask() {
+                override fun run() {
+                    count++
+                    // Add the new chat to the current chatList and update the adapter
+                    Log.d("count", count.toString())
+                    updatedChatList.add(newChat)
 
-        cancelTask = object : TimerTask() {
-            override fun run() {
-                count++
-                // Add the new chat to the current chatList and update the adapter
-
-                updatedChatList.add(newChat)
-
-                runOnUiThread {
-                    adapter.updateData(updatedChatList)
+                    runOnUiThread {
+                        adapter.updateData(updatedChatList)
+                    }
                 }
             }
         }
-
 
         //========================================
 
         val recButton = findViewById<Button>(R.id.rec_button)
         recButton.setOnClickListener {
             //你要寫在這
+
+            if (!isTimerScheduled) {
+                timer = Timer()
+                val cancelTask1 = createCancelTask()
+                timer?.schedule(cancelTask1, 0, 3000)
+                Log.d("schedule", "schedule")
+                isTimerScheduled = true
+            } else {
+                timer?.cancel()
+                Log.d("cancel", "cancel")
+                isTimerScheduled = false
+            }
+
             if (!isRecording) {
                 if (ContextCompat.checkSelfPermission(
                         this,
@@ -119,11 +131,11 @@ class MainActivity : AppCompatActivity() {
                     )
                 } else {
                     waveRecorder.startRecording()
-//                    timer.schedule(cancelTask, 0, 3000)
+                    //timer.schedule(cancelTask, 0, 3000)
                 }
             } else {
                 waveRecorder.stopRecording()
-//                timer.cancel()
+                //timer.cancel()
             }
             //----------------------------
             val json = loadJSONFromAsset(baseContext, "chats1.json")
@@ -186,19 +198,15 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         // Ensure you cancel the timer when the activity is destroyed to avoid memory leaks
-        timer.cancel()
+        timer?.cancel()
     }
-    private fun scheduleTimerTask() {
-        if (!isRecording && !isTimerScheduled) {
-            timer.schedule(cancelTask, 0, 3000)
-            isTimerScheduled = true // Mark the timer as scheduled
-        }
+    /*private fun scheduleTimerTask() {
+        timer?.schedule(cancelTask, 0, 3000)
+        isTimerScheduled = true // Mark the timer as scheduled
     }
     private fun cancelTimerTask() {
-        if (!isRecording && isTimerScheduled) {
-            cancelTask.cancel()
-            isTimerScheduled = false // Mark the timer as not scheduled
-        }
+        cancelTask.cancel()
+        isTimerScheduled = false // Mark the timer as not scheduled
     }
-
+    */
 }
