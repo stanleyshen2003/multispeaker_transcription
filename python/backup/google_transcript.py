@@ -1,7 +1,7 @@
 import speech_recognition as sr
 r = sr.Recognizer()
 
-hellow=sr.AudioFile('src_sound/test2.wav')
+hellow=sr.AudioFile('hello_world.wav')
 with hellow as source:
     audio = r.record(source)
 try:

@@ -11,6 +11,19 @@ import speech_recognition as sr
 import io 
 
 '''
+not used
+'''
+# class myseparator(separator):
+#     def from_hparams(source):
+#         with open(source) as fin:
+#             hparams = load_hyperpyyaml(fin, {})
+#         return cls(hparams["modules"],hparams,NULL)
+
+# print(os.path.abspath("pretrained_models/sepformer-wsj02mix/hyperparams.yaml"))
+# model = myseparator.from_hparams(source='pretrained_models/sepformer-wsj02mix/hyperparams.yaml')
+
+
+'''
 !!!! write your code under here !!!!
 '''
 class Voice_process_agent():
@@ -45,6 +58,8 @@ class Voice_process_agent():
         return model
     
     def bin_to_tensor(self, binary):
+        # with open("source0.wav", "rb") as file:
+        #     binary = file.read()
         waveform, sample_rate = torchaudio.load(io.BytesIO(binary))
         return waveform
 
@@ -73,6 +88,29 @@ class Voice_process_agent():
         score, prediction = self.verification_model.verify_batch(voice1, voice2, threshold=0.5)
         return prediction.item()
     
+    # def separate_files(self, file_name, save_separate = True):
+    #     result = self.separate_model.separate_file(path=file_name)
+        
+    #     if save_separate:
+    #         for i in range(np.array(result.shape)[-1]):
+    #             fileout = "source" + str(i) + ".wav"
+    #             torchaudio.save(fileout, result[:, :, i].detach().cpu(), 8000)
+            
+    #     for i in range(np.array(result.shape)[-1]):        
+    #         result[:,:,i] = result[:,:,i].detach().cpu()
+    #         found = False
+    #         for j in range(len(self.voice_record)):
+    #             same = self.determine_identical(result[:,:,i], self.voice_record[j][0])
+    #             if same:
+    #                 self.now_processing.append((result[:,:,i],j))
+    #                 found = True
+    #                 break
+    #         if not found and len(self.voice_record) < self.maxPeople:
+    #             self.now_processing.append((result[:,:,i],len(self.voice_record)))
+    #             self.voice_record.append((result[:,:,i],len(self.voice_record)))
+    #         elif not found:
+    #             self.now_processing.append((result[:,:,i],-1))
+    
     def deletenow(self):
         self.now_processing = []
 
@@ -84,21 +122,39 @@ class Voice_process_agent():
         result = json.dumps(result_list, indent=4)
         with open('ouput.json', 'w') as output:
             output.write(result)
-        return result
 
 
-    def process(self, data):
-        tensor_file = self.bin_to_tensor(data)
-        text = self.transcript(data)
-        return self.to_json()
+    def process(self, path):
+        file = open(path, "rb").read()
+        tensor_file = self.bin_to_tensor(file)
+        text = self.transcript(file)
+        self.to_json()
 
 
                 
                 
                 
 
+
+
+# model = separator.from_hparams(source='pretrained_models/sepformer-wsj02mix', savedir='pretrained_models/sepformer-wsj02mix')
+
+# # for custom file, change path
+# est_sources = model.separate_file(path='test_mixture.wav') 
+
+
+# for i in range(np.array(est_sources.shape)[-1]):
+#     fileout = "source" + str(i) + ".wav"
+#     torchaudio.save(fileout, est_sources[:, :, i].detach().cpu(), 8000)
 
 if __name__ == "__main__":
     agent = Voice_process_agent(need_load=True)
-    agent.process('Server_/received_song.bin')
+    #agent.separate_files("src/test4.wav", save_separate=True)
+    #agent.transcript()
+    agent.process('python/Server_/received_song.wav')
     print(len(agent.voice_record))
+
+# verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+# score, prediction = verification.verify_files("Keven.wav", "Stanely_2.wav")
+
+# print(prediction, score)
