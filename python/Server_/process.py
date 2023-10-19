@@ -122,13 +122,14 @@ class Voice_process_agent():
         result = json.dumps(result_list, indent=4)
         with open('ouput.json', 'w') as output:
             output.write(result)
+        return result
 
 
     def process(self, data):
         #file = open(path, "rb").read()
         tensor_file = self.bin_to_tensor(data)
         text = self.transcript(data)
-        self.to_json()
+        return self.to_json()
 
 
                 
