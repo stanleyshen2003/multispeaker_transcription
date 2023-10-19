@@ -6,7 +6,6 @@ from process import Voice_process_agent
 HOST = '172.16.168.1'  # Standard loopback interface address (localhost)
 PORT = 8082        # Port to listenon-privileged ports are > 1023)
 
-
 # Create a socket object
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     # Bind the socket to the host and port
