@@ -19,7 +19,7 @@ class Voice_process_agent():
         separate_model_name: the model you want to use
         need_load: whether you have a local file of model
     '''
-    def __init__(self, separate_model_name = "sepformer-wsj02mix", verification_model_name = "spkrec-ecapa-voxceleb", need_load = True):
+    def __init__(self, verification_model_name = "spkrec-ecapa-voxceleb", need_load = True):
         self.maxPeople = 5
         self.verification_model = self.load_verify_model(verification_model_name, need_load)
         self.r = sr.Recognizer()
@@ -30,10 +30,9 @@ class Voice_process_agent():
         index is 0 to 4, if a new audio identified and exceed people limit, index = -1
         '''
         self.voice_record = []
-        self.now_processing = []
-        self.output_record = []
+        self.now_processing = None
+        self.output_record = None
 
-    
     def load_verify_model(self, model_name, need_load):
         """
         input:
@@ -47,12 +46,19 @@ class Voice_process_agent():
         return model
 
     def bin_to_tensor(self, binary):
-        waveform, sample_rate = torchaudio.load(io.BytesIO(binary))
+        '''
+        input: binary data
+        output: corresponding tensor
+        '''
+        waveform, _ = torchaudio.load(io.BytesIO(binary))
         return waveform
 
-
     def transcript(self, binary, who):
-        # binary file would be altered with binary file_name(if can)
+        '''
+        transcribe a binary data to text
+        input: binary data & index of person
+        output: None (store the record in self.output_record)
+        '''
         binary = io.BytesIO(binary)
         data = sr.AudioFile(binary)
 
@@ -60,23 +66,31 @@ class Voice_process_agent():
             audio = self.r.record(source)
         try:
             s = self.r.recognize_google(audio)
-            self.output_record.append([s, who])
+            self.output_record = [s, who]
             print("Text: "+s)
         except Exception as e:
             print("Exception: Can't Recognize")
 
-
     def determine_identical(self, voice1, voice2):
-        score, prediction = self.verification_model.verify_batch(voice1, voice2, threshold=0.3)
+        '''
+        given voice converted to tensor, determine whether they're from the same person
+        input: voice tensor * 2
+        output: True/False
+        '''
+        _, prediction = self.verification_model.verify_batch(voice1, voice2, threshold=0.3)
         # print(prediction.item(), score)
         return prediction.item()
-    
-    def deletenow(self):
-        self.now_processing = []
 
-    def seperate_user(self, data):
+    def separate_user(self, data):
+        '''
+        identify voice index
+        create a record if not in self.voice_record
+        return the index of person
+        input: binary data
+        output: index of the person
+        '''
         self.now_processing = self.bin_to_tensor(data)
-        print(self.now_processing.shape)
+        # print(self.now_processing.shape)
         if len(self.voice_record) == 0:
             self.voice_record.append((self.now_processing, len(self.voice_record)+1))
             return 1
@@ -88,29 +102,29 @@ class Voice_process_agent():
         self.voice_record.append((self.now_processing, len(self.voice_record)+1))
         return len(self.voice_record)
 
-
     def to_json(self):
-        result_list = []
-        for record in self.output_record:
-            result_list.append({'txt':record[0], 'who':record[1]})
+        '''
+        input: None (use self.output_record)
+        output: JSON file
+        '''
+        result_list = [{'text':self.output_record[0], 'id':self.output_record[1]}]
         result = json.dumps(result_list, indent=4)
         with open('ouput.json', 'w') as output:
             output.write(result)
         return result
 
-
     def process(self, data):
-        data = open(data, "rb").read()
-        who = self.seperate_user(data)
+        '''
+        The pipeline of voice processing.
+        Called to process the binary data.
+        input: binary data
+        output: JSON file
+        '''
+        # data = open(data, "rb").read()
+        who = self.separate_user(data)
         self.transcript(data, who)
-        self.deletenow()
-        #print(who)
+        # print(who)
         return self.to_json()
-
-
-                
-                
-                
 
 
 if __name__ == "__main__":
