@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatroom_wav.R
 import com.example.chatroom_wav.data.Chat
-
+import com.example.chatroom_wav.data.getImageForName
 class ChatAdapter(private val context: Context, private var chatList: List<Chat>, private val recyclerView: RecyclerView) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
@@ -24,9 +24,9 @@ class ChatAdapter(private val context: Context, private var chatList: List<Chat>
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val chat = chatList[position]
-        holder.userImage.setImageResource(chat.image ?: R.drawable.user_image)
         holder.userName.text = chat.name
         holder.chatText.text = chat.text
+        holder.userImage.setImageResource(getImageForName(chat.name) ?: R.drawable.user_image)
 
         if (position == chatList.size - 1) {
             recyclerView.smoothScrollToPosition(position)

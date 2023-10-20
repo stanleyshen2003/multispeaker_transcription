@@ -26,7 +26,7 @@ fun parseChatJSON(json: String): List<Chat> {
             val name = jsonObject.getString("name")
             val text = jsonObject.getString("text")
             val image = getImageForName(name) // Assign image based on name
-            val chat = Chat(i.toLong(), name, image, text)
+            val chat = Chat(name, text)
             chatList.add(chat)
         }
     } catch (e: Exception) {
