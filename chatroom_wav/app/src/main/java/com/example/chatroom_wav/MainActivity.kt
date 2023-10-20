@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     private var timer: Timer? = null
     private var isTimerScheduled = false
 
-    private var serverAddress :String = "172.16.168.1"
+    private var serverAddress :String = "172.17.41.191"
     private var serverPort :Int = 8082
 
 
@@ -189,7 +189,7 @@ class MainActivity : AppCompatActivity() {
         }
 //        serverAddress = "172.16.168.1"
 //        serverPort = 8082
-        SocketClient(serverAddress, serverPort, filePath).execute()
+        SocketClient(serverAddress, serverPort, filePath).connect()
     }
 
 
