@@ -55,10 +55,13 @@ public class SocketClient extends AsyncTask<String, Integer, String> {
             //Thread.sleep(200000);
 
             System.out.println("Connect again");
+            System.out.println("Connecting to " + this.dstAddress + " on port " + this.dstPort);
             socket = new Socket(dstAddress, dstPort);
+            System.out.println("Connect again");
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             StringBuilder response = new StringBuilder();
             String line;
+
             while (true) {
                 line = input.readLine();
                 System.out.println(line);

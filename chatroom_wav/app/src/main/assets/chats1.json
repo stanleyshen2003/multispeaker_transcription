@@ -1,16 +1,13 @@
 [
   {
-    "id": 0,
     "name": "user1",
     "text": "Hey everyone, how's your day going?"
   },
   {
-  "id": 2,
   "name": "user2",
   "text": "Hey Alex! Not too bad, just busy with work. How about you?"
   },
   {
-    "id": 3,
     "name": "user1",
     "text": " I'm doing great, just got back from a weekend camping trip. It was awesome!"
   }
