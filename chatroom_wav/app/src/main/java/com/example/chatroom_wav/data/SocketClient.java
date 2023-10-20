@@ -46,10 +46,21 @@ public class SocketClient extends AsyncTask<String, Integer, String> {
             System.out.println(audioBytes);
             io.write(audioBytes);
 
+            Thread.sleep(20000);
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = input.readLine()) != null) {
+                response.append(line);
+            }
+
             // Close the connection
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         return response;
     }
