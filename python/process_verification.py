@@ -67,22 +67,16 @@ class Voice_process_agent():
 
 
     def determine_identical(self, voice1, voice2):
-        result = []
-        voice1_list = [voice1[:,:16000], voice1[:,16001:32000], voice1[:,32001:48000]]
-        voice2_list =  [voice2[:,:16000], voice2[:,16001:32000], voice2[:,32001:48000]]
-        for i in voice1_list:
-            for j in voice2_list:
-                score, prediction = self.verification_model.verify_batch(i, j, threshold=0.7)
-                result.append(prediction.item())
-        same = result.count(True) > result.count(False)
-        print(result)
-        return same
+        score, prediction = self.verification_model.verify_batch(voice1, voice2, threshold=0.3)
+        # print(prediction.item(), score)
+        return prediction.item()
     
     def deletenow(self):
         self.now_processing = []
 
     def seperate_user(self, data):
         self.now_processing = self.bin_to_tensor(data)
+        print(self.now_processing.shape)
         if len(self.voice_record) == 0:
             self.voice_record.append((self.now_processing, len(self.voice_record)+1))
             return 1
@@ -121,8 +115,8 @@ class Voice_process_agent():
 
 if __name__ == "__main__":
     agent = Voice_process_agent(need_load=True)
-    agent.process('backup/sound/Gunter.wav')
+    agent.process('backup/sound/grace.wav')
     # agent.process('backup/sound/barren.wav')
-    # agent.process('backup/sound/stanley.wav')
-    agent.process('backup/sound/gunter2.wav')
+    agent.process('backup/sound/grace2.wav')
+    agent.process('backup/sound/barren.wav')
     # print(len(agent.voice_record))
