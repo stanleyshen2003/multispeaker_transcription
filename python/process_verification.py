@@ -70,6 +70,8 @@ class Voice_process_agent():
             print("Text: "+s)
         except Exception as e:
             print("Exception: Can't Recognize")
+            del self.voice_record[-1]
+            self.output_record = ["###", -1]
 
     def determine_identical(self, voice1, voice2):
         '''
@@ -107,7 +109,7 @@ class Voice_process_agent():
         input: None (use self.output_record)
         output: JSON file
         '''
-        result_list = [{'text':self.output_record[0], 'id':self.output_record[1]}]
+        result_list = [{'text':self.output_record[0], 'name':'user'+str(self.output_record[1])}]
         result = json.dumps(result_list, indent=4)
         with open('ouput.json', 'w') as output:
             output.write(result)
@@ -120,7 +122,7 @@ class Voice_process_agent():
         input: binary data
         output: JSON file
         '''
-        # data = open(data, "rb").read()
+        data = open(data, "rb").read()
         who = self.separate_user(data)
         self.transcript(data, who)
         # print(who)
