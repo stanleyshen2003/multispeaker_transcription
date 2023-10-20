@@ -122,9 +122,12 @@ class Voice_process_agent():
         input: binary data
         output: JSON file
         '''
-        data = open(data, "rb").read()
-        who = self.separate_user(data)
-        self.transcript(data, who)
+        #data = open(data, "rb").read()
+        if len(self.voice_record) >= 5:
+            self.output_record = ["###", -1]
+        else:
+            who = self.separate_user(data)
+            self.transcript(data, who)
         # print(who)
         return self.to_json()
 
