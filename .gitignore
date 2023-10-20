@@ -1,0 +1,7 @@
+# Ignore log files
+.vscode
+
+# Ignore the node_modules directory
+pretrained_models/
+python/Server_/__pycache__/
+python/Server_/pretrained_models/
