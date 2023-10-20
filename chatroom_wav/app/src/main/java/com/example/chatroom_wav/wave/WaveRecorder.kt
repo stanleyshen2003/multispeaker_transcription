@@ -55,7 +55,6 @@ class WaveRecorder(private var filePath: String) {
         private set
 
     private var isRecording = false
-    private var isPaused = false
     private lateinit var audioRecorder: AudioRecord
     private var noiseSuppressor: NoiseSuppressor? = null
     private var timeModulus = 1
@@ -88,10 +87,14 @@ class WaveRecorder(private var filePath: String) {
             isRecording = true
 
             audioRecorder.startRecording()
-
-            if (noiseSuppressorActive) {
+            if (NoiseSuppressor.isAvailable() and noiseSuppressorActive) {
                 noiseSuppressor = NoiseSuppressor.create(audioRecorder.audioSessionId)
+                // Use the noise suppressor effect
+            } else {
+                // Noise suppressor is not available on this device
             }
+
+
 
             onStateChangeListener?.let {
                 it(RecorderState.RECORDING)
@@ -116,7 +119,7 @@ class WaveRecorder(private var filePath: String) {
             val operationStatus = audioRecorder.read(data, 0, bufferSize)
 
             if (AudioRecord.ERROR_INVALID_OPERATION != operationStatus) {
-                if (!isPaused) outputStream.write(data)
+                outputStream.write(data)
 
                 withContext(Dispatchers.Main) {
                     onAmplitudeListener?.let {
@@ -161,7 +164,6 @@ class WaveRecorder(private var filePath: String) {
 
         if (isAudioRecorderInitialized()) {
             isRecording = false
-            isPaused = false
             audioRecorder.stop()
             audioRecorder.release()
             audioSessionId = -1
@@ -176,18 +178,5 @@ class WaveRecorder(private var filePath: String) {
     private fun isAudioRecorderInitialized(): Boolean =
         this::audioRecorder.isInitialized && audioRecorder.state == AudioRecord.STATE_INITIALIZED
 
-    fun pauseRecording() {
-        isPaused = true
-        onStateChangeListener?.let {
-            it(RecorderState.PAUSE)
-        }
-    }
-
-    fun resumeRecording() {
-        isPaused = false
-        onStateChangeListener?.let {
-            it(RecorderState.RECORDING)
-        }
-    }
 
 }

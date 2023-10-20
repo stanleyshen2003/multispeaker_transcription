@@ -127,7 +127,6 @@ class MainActivity : AppCompatActivity() {
                     //正在錄音 => 關閉錄音
                     else {
                         waveRecorder.stopRecording()
-                        val transcript = SocketClient(serverAddress, serverPort, filePath).connect()
                         waveRecorder.startRecording()
                     }
 
@@ -188,6 +187,9 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
             Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
         }
+//        serverAddress = "172.16.168.1"
+//        serverPort = 8082
+        SocketClient(serverAddress, serverPort, filePath).execute()
     }
 
 
