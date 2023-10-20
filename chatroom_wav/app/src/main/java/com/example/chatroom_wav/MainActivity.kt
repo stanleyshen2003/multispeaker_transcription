@@ -56,6 +56,20 @@ class MainActivity : AppCompatActivity() {
         adapter = ChatAdapter(this, chatList ?: emptyList() ,recyclerView)
         recyclerView.adapter = adapter
 
+        //開權限===========================================================================
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.RECORD_AUDIO),
+                PERMISSIONS_REQUEST_RECORD_AUDIO
+            )
+        }
+
         //設定音訊存檔路徑===================================================================
         val downloadDir =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -88,6 +102,16 @@ class MainActivity : AppCompatActivity() {
                     count++
                     Log.d("count", count.toString())
 
+                    //現在沒錄音 => 啟動錄音
+                    if (!isRecording) {
+                        waveRecorder.startRecording()
+                    }
+                    //正在錄音 => 關閉錄音
+                    else {
+                        waveRecorder.stopRecording()
+                        waveRecorder.startRecording()
+                    }
+
                     //讀檔生成=====================================================================
                     val json = loadJSONFromAsset(baseContext, "chats1.json")
                     val chatList = parseChatJSON(json)
@@ -119,6 +143,7 @@ class MainActivity : AppCompatActivity() {
         //設定按鈕=======================================================================
         val recButton = findViewById<Button>(R.id.rec_button)
         recButton.setOnClickListener {
+
             if (!isTimerScheduled) {
                 timer = Timer()
                 val cancelTask1 = createCancelTask()
@@ -129,29 +154,6 @@ class MainActivity : AppCompatActivity() {
                 timer?.cancel()
                 Log.d("cancel", "cancel")
                 isTimerScheduled = false
-            }
-            //現在沒錄音 => 啟動錄音
-            if (!isRecording) {
-                //要求權限
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.RECORD_AUDIO
-                    )
-                    != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.RECORD_AUDIO),
-                        PERMISSIONS_REQUEST_RECORD_AUDIO
-                    )
-                }
-                //開始錄音
-                else {
-                    waveRecorder.startRecording()
-                }
-            }
-            //正在錄音 => 關閉錄音
-            else {
                 waveRecorder.stopRecording()
             }
         }
@@ -165,7 +167,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun stopRecording() {
         isRecording = false
-        Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
+        runOnUiThread {
+            Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
+        }
         val serverAddress = "172.16.168.1"
         val serverPort = 8082
         SocketClient(serverAddress, serverPort, filePath).execute()
