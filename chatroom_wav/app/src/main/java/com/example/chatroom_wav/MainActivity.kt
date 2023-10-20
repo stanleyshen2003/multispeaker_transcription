@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         //設定tool bar==================================================================
-        val toolBar = findViewById<Toolbar>(R.id.toolbar)
+
 
         //設定按鈕=======================================================================
         val recButton = findViewById<Button>(R.id.rec_button)
