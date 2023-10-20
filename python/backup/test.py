@@ -124,6 +124,31 @@ class Voice_process_agent():
             output.write(result)
 
 
+    def split(self, input_data, seconds, output_prefix):
+        #wav_file = io.BytesIO(input_data)
+        with wave.open(input_data, 'rb') as wav_file:
+            # Get the frame rate and total frames
+            frame_rate = wav_file.getframerate()
+            total_frames = wav_file.getnframes()
+
+            # Calculate the number of frames for the specified duration
+            frames_per_second = frame_rate * seconds
+            frames_per_chunk = int(frames_per_second)
+
+            # Read and write chunks of audio
+            for i in range(0, total_frames, frames_per_chunk):
+                wav_file.setpos(i)
+                frames = min(frames_per_chunk, total_frames - i)
+                chunk_data = wav_file.readframes(frames)
+
+            # Write the chunk to a new file
+                output_file = f"{output_prefix}_{i // frame_rate}s.wav"
+                with wave.open(output_file, 'wb') as output_wav:
+                    output_wav.setnchannels(wav_file.getnchannels())
+                    output_wav.setsampwidth(wav_file.getsampwidth())
+                    output_wav.setframerate(frame_rate)
+                    output_wav.writeframes(chunk_data)
+
     def process(self, path):
         file = open(path, "rb").read()
         tensor_file = self.bin_to_tensor(file)
