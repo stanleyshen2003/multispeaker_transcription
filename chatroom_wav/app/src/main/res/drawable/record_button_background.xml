@@ -3,6 +3,7 @@
 
     <!-- Add a record icon in the center of the button -->
     <item
-        android:drawable="@mipmap/ic_record_white"
+        android:drawable="@drawable/mic"
         android:gravity="center" />
+
 </layer-list>

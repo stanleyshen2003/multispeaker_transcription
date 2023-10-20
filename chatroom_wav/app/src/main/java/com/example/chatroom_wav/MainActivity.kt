@@ -8,6 +8,8 @@ import android.os.Environment
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import android.widget.Toolbar
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -43,17 +45,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //直接讀檔顯示頭兩個chat(之後刪掉)======================================================
         recyclerView = findViewById(R.id.recycler_view)
-
         val dataSource = DataSource.getDataSource(resources)
         val chatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
 
         recyclerView.layoutManager =
-            LinearLayoutManager(this) // 设置LayoutManager为LinearLayoutManager
+            LinearLayoutManager(this)
 
         adapter = ChatAdapter(this, chatList ?: emptyList() ,recyclerView)
         recyclerView.adapter = adapter
 
+        //設定音訊存檔路徑===================================================================
         val downloadDir =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 
@@ -64,6 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         filePath = recordFilePath + "/audioFile.wav"
 
+        //設定錄音工具=====================================================================
         waveRecorder = WaveRecorder(filePath)
 
         waveRecorder.onStateChangeListener = {
@@ -74,29 +78,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
         waveRecorder.noiseSuppressorActive=true
-        //todo
 
-
-
-
-        val newChat = Chat(id = 7, name = "New User", image = R.drawable.user_image, text = "New Message")
-        val updatedChatList = chatList?.toMutableList() ?: mutableListOf()
-        val iterations = 5
+        //每三秒做一次顯示========================================================================
         var count = 0
 
         fun createCancelTask(): TimerTask {
             return object : TimerTask() {
                 override fun run() {
                     count++
-                    // Add the new chat to the current chatList and update the adapter
                     Log.d("count", count.toString())
 
-                    //add
-
+                    //讀檔生成=====================================================================
                     val json = loadJSONFromAsset(baseContext, "chats1.json")
                     val chatList = parseChatJSON(json)
                     val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
-
+                    //驗證 append/ concat
                     if (currentChatList.isNotEmpty() && currentChatList.last().name == chatList.first().name) {
                         currentChatList[currentChatList.lastIndex] = currentChatList.last().copy(
                             text = currentChatList.last().text + " " + chatList.first().text
@@ -105,8 +101,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         currentChatList.addAll(chatList)
                     }
-
-
+                    //更新資料與畫面
                     dataSource.getChatList().postValue(currentChatList)
                     runOnUiThread {
                         adapter.updateData(currentChatList)
@@ -114,23 +109,16 @@ class MainActivity : AppCompatActivity() {
                     recyclerView.postDelayed({
                         recyclerView.smoothScrollToPosition(currentChatList.size - 1)
                     }, 100)
-                    //
-                    /*
-                    updatedChatList.add(newChat)
 
-                    runOnUiThread {
-                        adapter.updateData(updatedChatList)
-                    }*/
                 }
             }
         }
+        //設定tool bar==================================================================
+        val toolBar = findViewById<Toolbar>(R.id.toolbar)
 
-        //========================================
-
+        //設定按鈕=======================================================================
         val recButton = findViewById<Button>(R.id.rec_button)
         recButton.setOnClickListener {
-            //你要寫在這
-
             if (!isTimerScheduled) {
                 timer = Timer()
                 val cancelTask1 = createCancelTask()
@@ -142,8 +130,9 @@ class MainActivity : AppCompatActivity() {
                 Log.d("cancel", "cancel")
                 isTimerScheduled = false
             }
-
+            //現在沒錄音 => 啟動錄音
             if (!isRecording) {
+                //要求權限
                 if (ContextCompat.checkSelfPermission(
                         this,
                         Manifest.permission.RECORD_AUDIO
@@ -155,37 +144,20 @@ class MainActivity : AppCompatActivity() {
                         arrayOf(Manifest.permission.RECORD_AUDIO),
                         PERMISSIONS_REQUEST_RECORD_AUDIO
                     )
-                } else {
-                    waveRecorder.startRecording()
-                    //timer.schedule(cancelTask, 0, 3000)
                 }
-            } else {
+                //開始錄音
+                else {
+                    waveRecorder.startRecording()
+                }
+            }
+            //正在錄音 => 關閉錄音
+            else {
                 waveRecorder.stopRecording()
-                //timer.cancel()
             }
-            //----------------------------
-            val json = loadJSONFromAsset(baseContext, "chats1.json")
-            val chatList = parseChatJSON(json)
-            val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
-            if (currentChatList.isNotEmpty() && currentChatList.last().name == chatList.first().name) {
-                currentChatList[currentChatList.lastIndex] = currentChatList.last().copy(
-                    text = currentChatList.last().text + " " + chatList.first().text
-                )
-                currentChatList.addAll(chatList.subList(1, chatList.size))
-            } else {
-                currentChatList.addAll(chatList)
-            }
-            Log.d("current", currentChatList.toString())
-
-            dataSource.getChatList().postValue(currentChatList)
-            adapter.updateData(currentChatList)
-
-            recyclerView.postDelayed({
-                recyclerView.smoothScrollToPosition(currentChatList.size - 1)
-            }, 100)
         }
     }
 
+    //錄音系列 function==========================================================================
     private fun startRecording() {
         Log.d(TAG, waveRecorder.audioSessionId.toString())
         isRecording = true
@@ -200,7 +172,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
+    //權限系列 function==========================================================================
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>, grantResults: IntArray
