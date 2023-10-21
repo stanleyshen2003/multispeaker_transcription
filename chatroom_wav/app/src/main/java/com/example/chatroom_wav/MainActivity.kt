@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         adapter = ChatAdapter(this, chatList ?: emptyList() ,recyclerView)
         recyclerView.adapter = adapter
+
         //setting========================================================================
         val settingIcon = findViewById<ImageView>(R.id.setting_icon)
 
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         serverAddress = sharedPreferences.getString("serverAddress", "192.168.43.218") ?: "192.168.43.218"
         serverPort = sharedPreferences.getString("serverPort", "8082")?.toIntOrNull() ?: 8082
         Log.d("MainActivity", "Server Address: $serverAddress, Server Port: $serverPort")
+
         //開權限===========================================================================
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -131,6 +133,8 @@ class MainActivity : AppCompatActivity() {
                     //正在錄音 => 關閉錄音
                     else {
                         waveRecorder.stopRecording()
+                        //存檔
+                        //filepath 從 1.wav 改為 2.wav
                         if (!isWav2) {
                             filePath = recordFilePath + "/audioFile2.wav"
                             waveRecorder.changeFilePath(filePath)
@@ -138,6 +142,7 @@ class MainActivity : AppCompatActivity() {
                             isWav2 = true
                             filepath_tmp = recordFilePath + "/audioFile1.wav"
                         }
+                        //filepath 從 2.wav 改為 1.wav
                         else {
                             filePath = recordFilePath + "/audioFile1.wav"
                             waveRecorder.changeFilePath(filePath)
@@ -172,13 +177,16 @@ class MainActivity : AppCompatActivity() {
         val recButton = findViewById<Button>(R.id.rec_button)
         recButton.setOnClickListener {
 
+            //尚未 create timer => set timer
             if (!isTimerScheduled) {
                 timer = Timer()
                 val cancelTask1 = createCancelTask()
-                timer?.schedule(cancelTask1, 0, 5000)
+                timer?.schedule(cancelTask1, 0, 4500)
                 Log.d("schedule", "schedule")
                 isTimerScheduled = true
-            } else {
+            }
+            //已 create timer => delete timer
+            else {
                 timer?.cancel()
                 Log.d("cancel", "cancel")
                 isTimerScheduled = false
@@ -198,7 +206,6 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
             Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
         }
-        //SocketClient(serverAddress, serverPort, filePath).connect()
     }
 
 
