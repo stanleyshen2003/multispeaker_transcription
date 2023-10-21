@@ -30,7 +30,9 @@ import java.util.Timer
 import java.util.TimerTask
 
 
+
 class MainActivity : AppCompatActivity() {
+
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ChatAdapter
@@ -44,8 +46,9 @@ class MainActivity : AppCompatActivity() {
     private var timer: Timer? = null
     private var isTimerScheduled = false
 
-    private var serverAddress :String = "192.168.43.218"
-    private var serverPort :Int = 8082
+    private var serverAddress :String = "172.17.40.106"
+    private var serverPort :Int = 8083
+    private var language :String = "en"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +57,7 @@ class MainActivity : AppCompatActivity() {
 
         //直接讀檔顯示頭兩個chat(之後刪掉)======================================================
         recyclerView = findViewById(R.id.recycler_view)
+
         val dataSource = DataSource.getDataSource(resources)
         val chatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
 
@@ -72,8 +76,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        serverAddress = sharedPreferences.getString("serverAddress", "192.168.43.218") ?: "192.168.43.218"
-        serverPort = sharedPreferences.getString("serverPort", "8082")?.toIntOrNull() ?: 8082
+        serverAddress = sharedPreferences.getString("serverAddress", "172.17.40.106") ?: "172.17.40.106"
+        serverPort = sharedPreferences.getString("serverPort", "8083")?.toIntOrNull() ?: 8083
+        language = sharedPreferences.getString("language", "en") ?: "en"
         Log.d("MainActivity", "Server Address: $serverAddress, Server Port: $serverPort")
 
         //開權限===========================================================================
@@ -156,11 +161,12 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     //讀檔生成=====================================================================
-                    val chatList = parseChatJSON(transcript)
+                    //val json = loadJSONFromAsset(baseContext,"chats1.json")
+                    val chatList = parseChatJSON(transcript, language)
                     val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
                     //驗證 append/ concat
                     if ((currentChatList.size>0) and (chatList.isNotEmpty())) {
-                        currentChatList.removeAt(currentChatList.size - 1)
+                        //currentChatList.removeAt(currentChatList.size - 1)
                         currentChatList.addAll(chatList)
                     }
                     //更新資料與畫面
@@ -180,7 +186,6 @@ class MainActivity : AppCompatActivity() {
         //設定按鈕=======================================================================
         val recButton = findViewById<Button>(R.id.rec_button)
         recButton.setOnClickListener {
-
             //尚未 create timer => set timer
             if (!isTimerScheduled) {
                 recButton.setBackgroundResource(R.drawable.stop_button)
@@ -198,7 +203,7 @@ class MainActivity : AppCompatActivity() {
                 isTimerScheduled = false
                 waveRecorder.stopRecording()
             }
-        }
+         }
     }
 
     //錄音系列 function==========================================================================

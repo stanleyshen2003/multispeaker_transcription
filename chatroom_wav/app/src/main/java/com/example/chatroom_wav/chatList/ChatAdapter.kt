@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatroom_wav.R
 import com.example.chatroom_wav.data.Chat
 import com.example.chatroom_wav.data.getImageForName
+
 class ChatAdapter(private val context: Context, private var chatList: List<Chat>, private val recyclerView: RecyclerView) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 

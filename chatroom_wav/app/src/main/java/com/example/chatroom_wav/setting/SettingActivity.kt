@@ -13,8 +13,8 @@ import com.example.chatroom_wav.MainActivity
 import com.example.chatroom_wav.R
 
 class SettingActivity : AppCompatActivity() {
-    private var serverAddress: String = "192.168.43.218"
-    private var serverPort: Int = 8082
+    private var serverAddress: String = "172.17.40.106"
+    private var serverPort: Int = 8083
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.setting)
