@@ -9,6 +9,7 @@ import torch
 from speechbrain.pretrained import EncoderDecoderASR
 import speech_recognition as sr
 import io 
+from google.cloud import speech_v1p1beta1 as speech
 
 '''
 !!!! write your code under here !!!!
@@ -22,7 +23,7 @@ class Voice_process_agent():
     def __init__(self, verification_model_name = "spkrec-ecapa-voxceleb", need_load = True):
         self.maxPeople = 5
         self.verification_model = self.load_verify_model(verification_model_name, need_load)
-        self.r = sr.Recognizer()
+        self.client = speech.SpeechClient()
 
         ''' 
         store all the audio files here
@@ -59,19 +60,39 @@ class Voice_process_agent():
         input: binary data & index of person
         output: None (store the record in self.output_record)
         '''
-        binary = io.BytesIO(binary)
-        data = sr.AudioFile(binary)
+        # binary = io.BytesIO(binary)
+        # data = sr.AudioFile(binary)
 
-        with data as source:
-            audio = self.r.record(source)
-        try:
-            s = self.r.recognize_google(audio)
-            self.output_record = [s, who]
-            print("Text: "+s)
-        except Exception as e:
-            print("Exception: Can't Recognize")
-            del self.voice_record[-1]
+        audio = speech.RecognitionAudio(content=binary)
+        config = speech.RecognitionConfig(
+            encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+            sample_rate_hertz=16000,
+            language_code='en-US'
+        )
+
+        response = self.client.recognize(config=config, audio=audio)
+
+        if response.results:
+            result = response.results[0].alternatives[0].transcript
+            print('Transcript: {}'.format(result))
+            self.output_record = [result, who]
+        else:
+            print('Can\'t recognize')
             self.output_record = ["###", -1]
+
+        #print(response.results.alternatives[0].transcript)
+        #return response.results.alternatives[0].transcript
+
+        # with data as source:
+        #     audio = self.r.record(source)
+        # try:
+        #     s = self.r.recognize_google(audio)
+        #     self.output_record = [s, who]
+        #     print("Text: "+s)
+        # except Exception as e:
+        #     print("Exception: Can't Recognize")
+        #     del self.voice_record[-1]
+        #     self.output_record = ["###", -1]
 
     def determine_identical(self, voice1, voice2):
         '''
@@ -127,15 +148,15 @@ class Voice_process_agent():
             self.output_record = ["###", -1]
         else:
             who = self.separate_user(data)
-            self.transcript(data, who)
-        # print(who)
+            self.transcript(data, who=0)
+        print(who)
         return self.to_json()
 
 
 if __name__ == "__main__":
     agent = Voice_process_agent(need_load=True)
-    agent.process('backup/sound/grace.wav')
-    # agent.process('backup/sound/barren.wav')
-    agent.process('backup/sound/grace2.wav')
     agent.process('backup/sound/barren.wav')
+    # agent.process('backup/sound/barren.wav')
+    # agent.process('backup/sound/grace2.wav')
+    # agent.process('backup/sound/barren.wav')
     # print(len(agent.voice_record))

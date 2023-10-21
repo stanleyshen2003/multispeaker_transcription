@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "peak-tide-402701",
+  "private_key_id": "acc8507021798694d9fc2946ad098dba451d3df4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDV5reox/wfCTJj\nCX6U6keWingxmE1Ggo9wRVB5PaS6AJZH4l17iKeVVVPqXcEUZlijI9MvQzEp2gz7\nCMRNMbFD+FSErzPEXxyZc6VwB0329GOGBKApHNAeih3y8BooOXM1olCdUF5Twuru\nuFXplYJZd2G8wZmrMdb9/PYYXkHLN7aQ0dQlWE+fkWgY+XSivTFOAaKyfO1xSJVx\nMZUTS4osP32f8Nhoc1pWkCXkbYE4mOxGRnuly3ITRbgey8MYZjh6q33hpEUcDjoj\n/tuRsHaIltY/vzUIbJNMu5bNzOyVgXHyL66pjmWatwrx65HKRlSl5rQqKNK08fRM\nHdfu3yPlAgMBAAECggEAAOZmXe2vfCLyBRQoZfCBahr9i/nf01zfxSFpiAUQIR85\nAqbrbUZjLB/uiTUpR5BxrYgMTq3Z8lriRJkiGFAN9qMAGgnRrjEXQfcIWmsRcylO\nlOUGln2yS3qZyyii94ncV/ytmafZqcEPc38vj1rLcFxt+xkWcC+2v51VnL8iyDvb\nDfuvP0x7OfOsTAGUavEPeH0FvCBF51hYtjKWK1PQDKJsz7bNvBO/hBYfDNQi6fa+\nQqQJovQ8WZt8+dWv2LvNis2MeuIk9B5E8Ckb23jOSB5ZaMFziQBiwYRCLXfsD2z2\nQUZEsT+XF8NCNh2xuF3DXzWMF9n/pE7iN0yau5Js+QKBgQD4xItRwDgtapsbyRU3\n8JuEVxXuQ1vv3CU0fg2079mYoD9F1F9MAbaiXMRvu1ydpmqAu2Im26QXqB1iSrbj\nAHfY3kDVhVH1sgkSSfFpU+eeyKri967aV5O3oSAhonMQ0jmuH5R3GCbTCIPo83sQ\ne56BMxLZ797sCLxmZfmyYFMoLQKBgQDcHq3PO9Uk0mpYrcWr2WAwv7BQQ3zfTPTo\nOEJnTBQPTdLHGa1yhHYTV6qgn0LLzepwwZ8kSif/0LujR77VBtl2BqGiKDeJ4+UT\nB0RvnQYcwH8ShE5JGG8/j74XbLWCUNZV0pWtdNOkz5xLp7lNfnuBxuu1ppdtPBWA\nu17WP7hFmQKBgQDL8k6J4j3sNgcd+3gS2YaWM9M9+ClKd0BlTaatHSpWr6HP/PF3\n3bu+VrGRLJkcgk+0ZGtukglwf5o/eCOB7WNT/7pFkzyDYsd/H/H0OR6eFcPLueW3\nCa+ID2fJS2Zsdv1k3G0aSkmiH8wNUnglJkPnhljBJZ+sAOl8RcQ1UjU6rQKBgFO+\nJDf0NmnU13q3Wb3AbHT/aG+QzWAS4hW62aB89CDCZc8zeKZZuKYxMwv6qynoRCnz\nr7zZrZAIdGpxMCvReEgLy9BqZn7CQfNUT3f7EEk9/tonlbT/Y8uVvycgR4m1gWWT\nQTiFesN37KlnvPq7hPdhm2k3YOLA+hlIr5LpGQz5AoGAfvGGWftzsNAE+tvSsZTG\ndpxzZl8SkWGUNMd9fE9dn0qr0LbMGNfrGZVjg0YrTe4/mdZUrJYuPZF6kmLIw0wU\nof7cF6YCO9ftxeLDKEX2c+KFOCF7kR3tsm1BePHr4IYrl0wIQVebJdeP6DFNUYIQ\n1EgHCGVX2tgwzWvmIczMhX0=\n-----END PRIVATE KEY-----\n",
+  "client_email": "cloud-speech-to-text-editor@peak-tide-402701.iam.gserviceaccount.com",
+  "client_id": "110450391620043402427",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/cloud-speech-to-text-editor%40peak-tide-402701.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
