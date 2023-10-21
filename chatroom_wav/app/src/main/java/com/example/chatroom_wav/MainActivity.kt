@@ -166,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                     val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
                     //驗證 append/ concat
                     if ((currentChatList.size>0) and (chatList.isNotEmpty())) {
-                        //currentChatList.removeAt(currentChatList.size - 1)
+                        currentChatList.removeAt(currentChatList.size - 1)
                         currentChatList.addAll(chatList)
                     }
                     //更新資料與畫面
