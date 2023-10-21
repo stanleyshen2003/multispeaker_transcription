@@ -29,7 +29,7 @@
         android:layout_marginStart="25dp"
         android:layout_marginTop="108dp"
         android:text="Server Address"
-        android:textSize="24sp"
+        android:textSize="20sp"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -48,11 +48,11 @@
     <TextView
         android:id="@+id/ServerPort"
         android:layout_width="170dp"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="20dp"
         android:text="Server Port"
-        android:textSize="24sp"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ServerAddress" />
 
@@ -66,5 +66,26 @@
         android:inputType="text"
         app:layout_constraintTop_toBottomOf="@+id/InputServerAddress"
         app:layout_constraintStart_toEndOf="@+id/ServerPort" />
+
+    <TextView
+        android:id="@+id/Language"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="20dp"
+        android:text="Language"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ServerPort" />
+
+    <Spinner
+        android:id="@+id/InputLanguage"
+        android:layout_width="180dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        app:layout_constraintTop_toBottomOf="@+id/InputServerPort"
+        app:layout_constraintStart_toEndOf="@+id/Language" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

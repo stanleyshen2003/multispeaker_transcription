@@ -97,8 +97,9 @@ class MainActivity : AppCompatActivity() {
         if (!downloadDir.exists()) {
             downloadDir.mkdirs()
         }
-        val recordFilePath = downloadDir.absolutePath
-
+        //val recordFilePath = downloadDir.absolutePath
+        val recordFilePath = this.getCacheDir().getAbsolutePath()
+        Log.d("recordFilePath",recordFilePath)
         //initial filepath to 1.wav
         var isWav2 = false
         filePath = recordFilePath + "/audioFile1.wav"
@@ -158,7 +159,10 @@ class MainActivity : AppCompatActivity() {
                     val chatList = parseChatJSON(transcript)
                     val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
                     //驗證 append/ concat
-                    currentChatList.addAll(chatList)
+                    if ((currentChatList.size>0) and (chatList.isNotEmpty())) {
+                        currentChatList.removeAt(currentChatList.size - 1)
+                        currentChatList.addAll(chatList)
+                    }
                     //更新資料與畫面
                     dataSource.getChatList().postValue(currentChatList)
                     runOnUiThread {
@@ -179,6 +183,7 @@ class MainActivity : AppCompatActivity() {
 
             //尚未 create timer => set timer
             if (!isTimerScheduled) {
+                recButton.setBackgroundResource(R.drawable.stop_button)
                 timer = Timer()
                 val cancelTask1 = createCancelTask()
                 timer?.schedule(cancelTask1, 0, 4500)
@@ -187,6 +192,7 @@ class MainActivity : AppCompatActivity() {
             }
             //已 create timer => delete timer
             else {
+                recButton.setBackgroundResource(R.drawable.record_button)
                 timer?.cancel()
                 Log.d("cancel", "cancel")
                 isTimerScheduled = false
@@ -204,7 +210,7 @@ class MainActivity : AppCompatActivity() {
     private fun stopRecording() {
         isRecording = false
         runOnUiThread {
-            Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_SHORT).show()
         }
     }
 
