@@ -1,9 +1,9 @@
 import socket
 import json
-from process import Voice_process_agent
+from process_verification import Voice_process_agent
 
 # Define the host and port
-HOST = '172.16.168.1'  # Standard loopback interface address (localhost)
+HOST = '10.112.0.30'  # Standard loopback interface address (localhost)
 PORT = 8082        # Port to listenon-privileged ports are > 1023)
 
 # Create a socket object
@@ -16,6 +16,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print('Server is listening on', HOST, 'port', PORT)
     while True:
         client, address = s.accept()
+        print(address)
         received_data = b''
         while True:
             data, address = client.recvfrom(2048)
@@ -27,5 +28,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         client, address = s.accept()
         msg_json = agent.process(received_data)
         print(msg_json)
+        msg_json += '\n'
         client.sendall(msg_json.encode())
         

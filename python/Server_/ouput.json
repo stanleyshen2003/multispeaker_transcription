@@ -1,26 +1,6 @@
 [
     {
-        "txt": "hello my name is Stanley",
-        "who": 0
-    },
-    {
-        "txt": "hello my name is Stanley",
-        "who": 0
-    },
-    {
-        "txt": "hello my name is very sure",
-        "who": 0
-    },
-    {
-        "txt": "10 * 10 * 3.03 meeting as Jordan Cleavers strategy in speaker race",
-        "who": 0
-    },
-    {
-        "txt": "hello my name is Stan",
-        "who": 0
-    },
-    {
-        "txt": "hello my name is Stan",
-        "who": 0
+        "text": "hello hello hello",
+        "name": "user1"
     }
 ]
