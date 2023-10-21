@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     private var timer: Timer? = null
     private var isTimerScheduled = false
 
-    private var serverAddress :String = "172.17.41.191"
+    private var serverAddress :String = "10.112.0.30"
     private var serverPort :Int = 8082
 
 
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        serverAddress = sharedPreferences.getString("serverAddress", "172.16.168.1") ?: "172.16.168.1"
+        serverAddress = sharedPreferences.getString("serverAddress", "10.112.0.30") ?: "10.112.0.30"
         serverPort = sharedPreferences.getString("serverPort", "8082")?.toIntOrNull() ?: 8082
         Log.d("MainActivity", "Server Address: $serverAddress, Server Port: $serverPort")
         //開權限===========================================================================
@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity() {
 
         //每三秒做一次顯示========================================================================
         var count = 0
+        var transcript: String = ""
 
         fun createCancelTask(): TimerTask {
             return object : TimerTask() {
@@ -127,6 +128,7 @@ class MainActivity : AppCompatActivity() {
                     //正在錄音 => 關閉錄音
                     else {
                         waveRecorder.stopRecording()
+                        transcript = SocketClient(serverAddress, serverPort, filePath).connect()
                         waveRecorder.startRecording()
                     }
 
@@ -187,8 +189,6 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
             Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
         }
-//        serverAddress = "172.16.168.1"
-//        serverPort = 8082
         SocketClient(serverAddress, serverPort, filePath).connect()
     }
 

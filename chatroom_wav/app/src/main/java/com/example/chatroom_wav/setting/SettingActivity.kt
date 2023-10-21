@@ -10,7 +10,7 @@ import com.example.chatroom_wav.MainActivity
 import com.example.chatroom_wav.R
 
 class SettingActivity : AppCompatActivity() {
-    private var serverAddress: String = "172.17.41.191"
+    private var serverAddress: String = "10.112.0.30"
     private var serverPort: Int = 8082
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
