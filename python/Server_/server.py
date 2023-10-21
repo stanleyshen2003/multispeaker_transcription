@@ -1,6 +1,6 @@
 import socket
 import json
-from process_verification import Voice_process_agent
+from process_verification_new import Voice_process_agent
 
 # Define the host and port
 HOST = '10.112.0.30'  # Standard loopback interface address (localhost)
