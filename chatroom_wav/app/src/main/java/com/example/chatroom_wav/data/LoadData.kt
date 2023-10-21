@@ -1,6 +1,7 @@
 package com.example.chatroom_wav.data
 
 import android.content.Context
+import android.util.Log
 import org.json.JSONArray
 import java.io.InputStream
 
@@ -27,7 +28,13 @@ fun parseChatJSON(json: String): List<Chat> {
             val text = jsonObject.getString("text")
             val image = getImageForName(name) // Assign image based on name
             val chat = Chat(name, text)
-            chatList.add(chat)
+            if(text!="###") {
+                chatList.add(chat)
+            }
+            else
+            {
+                Log.d("###","###")
+            }
         }
     } catch (e: Exception) {
         e.printStackTrace()

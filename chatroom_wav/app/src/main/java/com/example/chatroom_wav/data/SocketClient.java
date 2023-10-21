@@ -28,7 +28,7 @@ public class SocketClient extends AsyncTask<String, Integer, String> {
         this.file_path = message;
     }
 
-    public String connect() {
+    public String connect(String file_path) {
         try {
             System.out.println("Connecting to " + this.dstAddress + " on port " + this.dstPort);
             Socket socket = new Socket(dstAddress, dstPort);
@@ -36,7 +36,7 @@ public class SocketClient extends AsyncTask<String, Integer, String> {
 
             OutputStream io = socket.getOutputStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            BufferedInputStream in = new BufferedInputStream(new FileInputStream(this.file_path));
+            BufferedInputStream in = new BufferedInputStream(new FileInputStream(file_path));
 
             int read;
             byte[] buff = new byte[2048];

@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     private var timer: Timer? = null
     private var isTimerScheduled = false
 
-    private var serverAddress :String = "10.112.0.30"
+    private var serverAddress :String = "192.168.43.218"
     private var serverPort :Int = 8082
 
 
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        serverAddress = sharedPreferences.getString("serverAddress", "10.112.0.30") ?: "10.112.0.30"
+        serverAddress = sharedPreferences.getString("serverAddress", "192.168.43.218") ?: "192.168.43.218"
         serverPort = sharedPreferences.getString("serverPort", "8082")?.toIntOrNull() ?: 8082
         Log.d("MainActivity", "Server Address: $serverAddress, Server Port: $serverPort")
         //開權限===========================================================================
@@ -97,7 +97,9 @@ class MainActivity : AppCompatActivity() {
         }
         val recordFilePath = downloadDir.absolutePath
 
-        filePath = recordFilePath + "/audioFile.wav"
+        //initial filepath to 1.wav
+        var isWav2 = false
+        filePath = recordFilePath + "/audioFile1.wav"
 
         //設定錄音工具=====================================================================
         waveRecorder = WaveRecorder(filePath)
@@ -114,6 +116,7 @@ class MainActivity : AppCompatActivity() {
         //每三秒做一次顯示========================================================================
         var count = 0
         var transcript: String = ""
+        var filepath_tmp: String = ""
 
         fun createCancelTask(): TimerTask {
             return object : TimerTask() {
@@ -128,23 +131,29 @@ class MainActivity : AppCompatActivity() {
                     //正在錄音 => 關閉錄音
                     else {
                         waveRecorder.stopRecording()
-                        transcript = SocketClient(serverAddress, serverPort, filePath).connect()
+                        if (!isWav2) {
+                            filePath = recordFilePath + "/audioFile2.wav"
+                            waveRecorder.changeFilePath(filePath)
+                            Log.d("changefilepath",filePath )
+                            isWav2 = true
+                            filepath_tmp = recordFilePath + "/audioFile1.wav"
+                        }
+                        else {
+                            filePath = recordFilePath + "/audioFile1.wav"
+                            waveRecorder.changeFilePath(filePath)
+                            Log.d("changefilepath",filePath )
+                            isWav2 = false
+                            filepath_tmp = recordFilePath + "/audioFile2.wav"
+                        }
                         waveRecorder.startRecording()
+                        transcript = SocketClient(serverAddress, serverPort, filepath_tmp).connect(filepath_tmp)
                     }
 
                     //讀檔生成=====================================================================
-                    val json = loadJSONFromAsset(baseContext, "chats1.json")
-                    val chatList = parseChatJSON(json)
+                    val chatList = parseChatJSON(transcript)
                     val currentChatList = dataSource.getChatList().value?.toMutableList() ?: mutableListOf()
                     //驗證 append/ concat
-                    if (currentChatList.isNotEmpty() && currentChatList.last().name == chatList.first().name) {
-                        currentChatList[currentChatList.lastIndex] = currentChatList.last().copy(
-                            text = currentChatList.last().text + " " + chatList.first().text
-                        )
-                        currentChatList.addAll(chatList.subList(1, chatList.size))
-                    } else {
-                        currentChatList.addAll(chatList)
-                    }
+                    currentChatList.addAll(chatList)
                     //更新資料與畫面
                     dataSource.getChatList().postValue(currentChatList)
                     runOnUiThread {
@@ -166,7 +175,7 @@ class MainActivity : AppCompatActivity() {
             if (!isTimerScheduled) {
                 timer = Timer()
                 val cancelTask1 = createCancelTask()
-                timer?.schedule(cancelTask1, 0, 3000)
+                timer?.schedule(cancelTask1, 0, 5000)
                 Log.d("schedule", "schedule")
                 isTimerScheduled = true
             } else {
@@ -189,7 +198,7 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
             Toast.makeText(this, "File saved at : $filePath", Toast.LENGTH_LONG).show()
         }
-        SocketClient(serverAddress, serverPort, filePath).connect()
+        //SocketClient(serverAddress, serverPort, filePath).connect()
     }
 
 
