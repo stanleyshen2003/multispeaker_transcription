@@ -34,11 +34,11 @@ Download the [chat.apk](https://github.com/stanleyshen2003/multispeaker_transcri
 To use the translate function, you have to open your android studio and place your API key in "data/Translator.java".
 
 ## Short demo
-- Chatroom
+- Chatroom\
 ![image](https://github.com/stanleyshen2003/multispeaker_transcription/assets/80504001/e3b1641c-521f-4f24-a356-8d85aeb6cdd7)
-- Setting
+- Setting\
 ![image](https://github.com/stanleyshen2003/multispeaker_transcription/assets/80504001/56bfb105-4095-4b5e-ae89-013b8c26abfe)
-- Translation
+- Translation\
 ![image](https://github.com/stanleyshen2003/multispeaker_transcription/assets/80504001/40773ba7-72f7-491e-80bc-9bd093b289bf)
 
 
