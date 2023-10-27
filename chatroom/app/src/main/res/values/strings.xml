@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">ICPC</string>
+    <string name="record">Record</string>
+    <string name="user1_name">user1</string>
+    <string name="user2_name">user2</string>
+    <string name="user3_name">user3</string>
+
+    <string name="text1">hi</string>
+    <string name="text2">hello</string>
+    <string name="text3">hfdhfdzgahaeathaehs</string>
+    <string name="text4">gsjeagarhtjnfaf</string>
+    <string name="text5">tghqagragrg</string>
+    <string name="text6">hfjgrwgrsdfwdfwesdjksqsas</string>
+
+    <string name="BodySize"> 18sp</string>
+    <string name="TitleMinSize"> 30sp</string>
+    <string name="TitleMaxSize"> 20sp</string>
+    <string name="Margin"> 50dp</string>
+
+</resources>

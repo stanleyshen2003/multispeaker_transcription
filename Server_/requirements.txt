@@ -1,5 +1,0 @@
-torchaudio==2.0.0
-speechbrain
-SpeechRecognition
-google-cloud-speech
-google-generativeai
