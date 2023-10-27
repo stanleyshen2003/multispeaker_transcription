@@ -7,12 +7,8 @@ import com.example.chatroom_wav.R
 fun chatList(resources: Resources): List<Chat> {
     return listOf(
         Chat(
-            name = "user4",
-            text = resources.getString(R.string.text1)
-        ),
-        Chat(
-            name = resources.getString(R.string.user2_name),
-            text = resources.getString(R.string.text2)
+            name = "user1",
+            text = "press the button to start"
         ),
     )
 }
