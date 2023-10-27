@@ -35,7 +35,9 @@ To use the translate function, you have to open your android studio and place yo
 
 ## Short demo
 - Chatroom\
-![image](https://github.com/stanleyshen2003/multispeaker_transcription/assets/80504001/e3b1641c-521f-4f24-a356-8d85aeb6cdd7)
+<p align="center">
+![image](https://github.com/stanleyshen2003/multispeaker_transcription/assets/80504001/e3b1641c-521f-4f24-a356-8d85aeb6cdd7 | height="100")
+</p>
 - Setting\
 ![image](https://github.com/stanleyshen2003/multispeaker_transcription/assets/80504001/56bfb105-4095-4b5e-ae89-013b8c26abfe)
 - Translation\
